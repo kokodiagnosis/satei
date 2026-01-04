@@ -64,7 +64,7 @@
             border: 2px solid white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             object-fit: cover;
-            background: #eee; /* 画像読み込み前の色 */
+            background: #eee;
         }
 
         /* 吹き出し */
@@ -76,12 +76,12 @@
         }
         .bot { 
             background: var(--msg-bot); 
-            border-radius: 4px 20px 20px 20px; /* 左上だけ尖らせる */
+            border-radius: 4px 20px 20px 20px; 
             color: #444; border: 1px solid #f0eddf;
         }
         .user { 
             background: var(--msg-user); color: white; 
-            border-radius: 20px 20px 4px 20px; /* 右下だけ尖らせる */
+            border-radius: 20px 20px 4px 20px; 
         }
 
         /* 入力エリア */
@@ -161,8 +161,8 @@
     let userData = {};
     let currentStep = 0;
 
-    // ★★★ ここで画像のファイル名を指定します ★★★
-    // GitHubにアップしたファイル名と完全に同じにしてください
+    // ★★★ ここで画像のファイル名を指定しています ★★★
+    // もしアイコンが出なかったら、GitHub上のファイル名が icon.png か確認してください
     const iconImage = "./icon.png";
 
     const allSteps = [
@@ -188,22 +188,18 @@
     }
 
     function addMessage(text, side) {
-        // 行（ラッパー）を作成
         const row = document.createElement('div');
         row.className = `chat-row ${side}`;
 
-        // Botの場合のみアイコン画像を追加
         if (side === 'bot') {
             const img = document.createElement('img');
             img.src = iconImage;
             img.className = 'bot-icon';
             img.alt = '担当者';
-            // 画像読み込みエラー時の処理（万が一画像がない場合）
             img.onerror = function() { this.style.display = 'none'; };
             row.appendChild(img);
         }
 
-        // 吹き出しを追加
         const msgDiv = document.createElement('div');
         msgDiv.className = `msg ${side}`;
         msgDiv.innerText = text;
@@ -240,9 +236,8 @@
         if (currentStep > 0) {
             currentStep--;
             const activeSteps = getActiveSteps();
-            log.innerHTML = ""; // 画面クリア
+            log.innerHTML = "";
             for(let i=0; i<currentStep; i++) {
-                // 履歴再描画
                 addMessage(activeSteps[i].msg, 'bot');
                 addMessage(userData[activeSteps[i].id], 'user');
             }
@@ -286,9 +281,8 @@
         }
     }
 
-    // ★★★ Googleフォーム連携（最後にentryIDを入れます） ★★★
     function sendDataToGoogle() {
-        // const formUrl = "https://docs.google.com/forms/d/e/XXXX/formResponse";
+        // ここに後ほどGoogleフォームの連携情報を入れます
         console.log("送信データ:", userData);
     }
 
