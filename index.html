@@ -128,8 +128,6 @@
             type: 'options', 
             options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい', '別住所の空き家を相談したい'] 
         },
-
-        // --- 分岐メッセージ ---
         { 
             id: 'akiya_warning',
             msg: '空き家のご相談ですね。実は今、放置リスクが非常に高まっています。<br><br>🚨 <span class="alert-text">相続登記の義務化</span>により、放置すると過料（罰則）の対象に。<br>🚨 特定空き家指定で<span class="alert-text">固定資産税が最大6倍</span>に跳ね上がります。<br><br>不法投棄や害虫の発生で近隣トラブルになる前に、一度出口戦略を立てませんか？（全国対応可能です！）',
@@ -139,27 +137,25 @@
         },
         { 
             id: 'fast_warning',
-            msg: '「すぐに」というご判断、素晴らしいです！<br><br>昨今の<span class="alert-text">金利上昇</span>により、不動産相場の先行きは不透明になりつつあります。だからこそ、<strong>「今」が最も高く売れるチャンス</strong>かもしれません。<br><br>また、ご自宅を売却して新しい家を購入する<strong>「売りながら買う（買い替え）」</strong>のご相談も増えています。最適なプランをご提案しますので、まずは価格を確認しましょう！',
+            msg: '「すぐに」というご判断、素晴らしいです！<br><br>昨今の<span class="alert-text">金利上昇</span>により、不動産相場の先行きは不透明になりつつあります。だからこそ、<strong>「今」が最も高く売れるチャンス</strong>かもしれません。<br><br>最適なプランをご提案しますので、まずは価格を確認しましょう！',
             type: 'options',
             options: ['査定に進む'],
             condition: () => userData.intent === 'すぐに売りたい'
         },
         { 
             id: 'mid_warning',
-            msg: '半年以内のご検討ですね。非常に賢明です。<br><br>しかし、<span class="alert-text">金利の上昇局面</span>に入り、半年後の相場は読みづらくなっています。<br><br>早めに現在の価値を知っておくことで、<strong>「売りながら買う」住み替えプラン</strong>も余裕を持って立てられます。準備期間が成功の鍵ですので、まずは現状を把握しましょう。',
+            msg: '半年以内のご検討ですね。非常に賢明です。<br><br>しかし、<span class="alert-text">金利の上昇局面</span>に入り、半年後の相場は読みづらくなっています。早めに現在の価値を知っておくことで、余裕を持ってプランを立てられます。まずは現状を把握しましょう。',
             type: 'options',
             options: ['査定に進む'],
             condition: () => userData.intent === '半年以内に検討したい'
         },
         { 
             id: 'market_warning',
-            msg: '相場の把握、とても大切です！<br><br>今は売る気がなくても、将来的に空き家になれば<span class="alert-text">固定資産税の負担増</span>や、金利上昇による<span class="alert-text">資産価値の下落</span>も考えられます。<br><br><strong>「今の価値」を知っておくことが最大の防御策</strong>です。もちろん査定は無料ですので、リスク回避のためにも確認しておきましょう！',
+            msg: '相場の把握、とても大切です！<br><br>将来的に空き家になれば<span class="alert-text">固定資産税の負担増</span>なども考えられます。<strong>「今の価値」を知っておくことが最大の防御策</strong>です。リスク回避のためにも確認しておきましょう！',
             type: 'options',
             options: ['無料で相場を確認する'],
             condition: () => userData.intent === 'まずは相場を知りたい'
         },
-
-        // --- 共通項目 ---
         { 
             id: 'type', 
             msg: '承知いたしました！物件の種別はどちらでしょうか？', 
@@ -176,20 +172,20 @@
         { 
             id: 'address', 
             msg: (u) => userData.intent === '別住所の空き家を相談したい' 
-                ? '空き家の住所（都道府県・市区町村から）を教えてください。<br>※空き家活用・売却は<strong>全国対応</strong>しています！' 
-                : '住所や建物名に間違いはありませんか？修正も可能です。<br><br><strong>※マンションの場合は、号室までご記入ください。</strong>正確な号室がわからないと査定に大きなズレが生じてしまいます。', 
+                ? '空き家の住所（都道府県・市区町村から）を教えてください。' 
+                : '住所や建物名に間違いはありませんか？修正も可能です。<br><br><strong>※マンションの場合は、号室までご記入ください。</strong>', 
             type: 'text', 
             placeholder: '例: 東京都港区〇〇 〇〇マンション 402号室' 
         },
         { id: 'unit_type', msg: '面積の単位はどちらがわかりやすいですか？', type: 'options', options: ['㎡（平米）', '坪（つぼ）'] },
         { id: 'area_val', msg: 'おおよその面積を教えていただけますか？', type: 'number', placeholder: '数字を入力してください', suffix: () => userData.unit_type },
-        { id: 'house_building_msg', msg: 'もう少しです！一戸建ての場合は、建物の面積も教えていただけますか？', type: 'number', placeholder: '数字を入力してください', condition: () => userData.type === '一戸建て', suffix: () => userData.unit_type },
-        { id: 'other_detail', msg: 'あともう一息です！ご相談内容（例：店舗、倉庫、共有名義、空き家の状態など）を詳しく教えていただけますか？', type: 'textarea', placeholder: 'こちらにご記入ください', condition: () => userData.type === 'その他' || userData.intent === '別住所の空き家を相談したい' },
-        { id: 'calculating', msg: 'ありがとうございます。入力も終盤です！ただいま最新の相場事例とリスク回避策を一生懸命チェックしています...', type: 'loading', duration: 2500 },
-        { id: 'name', msg: 'お待たせしました！算出の準備が整いました。最後にお客様の情報を伺います。まずはお名前をお願いします。', type: 'text', placeholder: '例: 田中 太郎' },
-        { id: 'tel', msg: 'もう少しです！ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心ください。', type: 'tel', placeholder: '例: 09012345678' },
-        { id: 'email', msg: 'これが最後の項目です！査定結果をお送りするメールアドレスを教えていただけますか？', type: 'email', placeholder: '例: mail@example.com' },
-        { id: 'finish', msg: 'すべて完了しました！お疲れ様でした！特典のアマギフ1万円分も面談完了時に進呈いたします。2営業日以内に詳細レポートをお届けします！', type: 'final' }
+        { id: 'house_building_msg', msg: '建物（戸建て）の面積も教えていただけますか？', type: 'number', placeholder: '数字を入力してください', condition: () => userData.type === '一戸建て', suffix: () => userData.unit_type },
+        { id: 'other_detail', msg: 'ご相談内容（例：店舗、共有名義、空き家の状態など）を詳しく教えていただけますか？', type: 'textarea', placeholder: 'こちらにご記入ください', condition: () => userData.type === 'その他' || userData.intent === '別住所の空き家を相談したい' },
+        { id: 'calculating', msg: 'ありがとうございます。ただいま最新の相場事例とリスク回避策を一生懸命チェックしています...', type: 'loading', duration: 2000 },
+        { id: 'name', msg: 'お待たせしました！算出の準備が整いました。最後にお名前をお願いします。', type: 'text', placeholder: '例: 田中 太郎' },
+        { id: 'tel', msg: 'ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心ください。', type: 'tel', placeholder: '例: 09012345678' },
+        { id: 'email', msg: '最後です！査定結果をお送りするメールアドレスを教えていただけますか？', type: 'email', placeholder: '例: mail@example.com' },
+        { id: 'finish', msg: 'すべて完了しました！お疲れ様でした！特典のアマギフ1万円分も面談完了時に進呈いたします。', type: 'final' }
     ];
 
     function getActiveSteps() { return allSteps.filter(s => !s.condition || s.condition()); }
@@ -297,41 +293,34 @@
                     <button class="back-btn" onclick="goBack()">戻る</button>
                     <button class="next-btn" onclick="handleInput()">次へ進む</button>
                 </div>
-                ${(step.id.includes('area') || step.id.includes('val')) ? `<button class="opt-btn" style="width:100%; margin-top:10px; border:1px solid #ddd; color:#aaa; font-size:13px;" onclick="handleInput('わからない')">わからない方はこちら</button>` : ''}
             `;
             setTimeout(() => { const input = document.getElementById('input-field'); input.focus(); scrollToBottom(); }, 100);
         }
     }
 
-    // ★解析済みデータを使った送信機能
+    // ★最新のGoogleフォームIDとEntryIDを反映済み
     function sendDataToGoogle() {
-        // あなたのGoogleフォームID
-        const formId = "1kfz03aFF9vZkHQxwXXMrVs_x8PJUA2OtvXZPSFxIIMU";
-        const formUrl = `https://docs.google.com/forms/d/${formId}/formResponse`;
+        const formId = "1FAIpQLSe4BrnC6mmrchhrMuWKjle6c11JYB49kbGfq_7KPhZPC4dZaA";
+        const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
         
         const params = new URLSearchParams();
         
-        // 解析したentryIDをセット
-        params.append('entry.2102114133', userData.intent);  // 検討状況
-        params.append('entry.2060699014', userData.type);    // 物件種別
-        params.append('entry.718051778', userData.zip);      // 郵便番号
-        params.append('entry.1359856317', userData.address); // 住所
-        params.append('entry.267966559', userData.unit_type);// 単位
-        params.append('entry.303690234', userData.area_val); // 面積
-        params.append('entry.178449700', userData.name);     // 名前
-        params.append('entry.408048248', userData.tel);      // 電話番号
-        params.append('entry.1403300568', userData.email);   // メール
+        params.append('entry.1147565457', userData.intent || "");  
+        params.append('entry.1438787019', userData.type || "");    
+        params.append('entry.548489816', userData.zip || "");      
+        params.append('entry.1207865917', userData.address || ""); 
+        params.append('entry.1989047910', userData.unit_type || "");
+        params.append('entry.1950450596', userData.area_val || ""); 
+        params.append('entry.1856331908', userData.name || "");     
+        params.append('entry.1114518361', userData.tel || "");      
+        params.append('entry.1809051052', userData.email || "");   
         
-        // 備考欄（その他詳細がある場合）
         if(userData.other_detail) {
-            params.append('entry.2102114133', userData.intent + " (" + userData.other_detail + ")");
+            params.append('entry.1147565457', "詳細: " + userData.other_detail);
         }
 
-        // 送信処理
         fetch(formUrl, { method: 'POST', mode: 'no-cors', body: params })
-        .then(() => {
-            console.log("送信完了！");
-        })
+        .then(() => { console.log("送信成功"); })
         .catch(err => console.error("送信エラー", err));
     }
     
@@ -339,3 +328,4 @@
 </script>
 </body>
 </html>
+     
