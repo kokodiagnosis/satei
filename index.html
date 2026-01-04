@@ -1,358 +1,516 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1分で完結！簡単査定 | 株式会社トリニティ</title>
-    <style>
-        :root { 
-            --main: #00469b; 
-            --sub: #ffcf00;  
-            --bg: #fffcf5;   
-            --msg-bot: #ffffff; 
-            --msg-user: #00469b;
-        }
-        
-        body { 
-            font-family: "Helvetica Neue", Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; 
-            background: var(--bg); 
-            margin: 0; padding: 0; 
-            display: flex; flex-direction: column; 
-            height: 100dvh; 
-            overflow: hidden; 
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>1分で完結！簡単査定 | 株式会社トリニティ</title>
+  <style>
+    :root {
+      --main: #00469b;
+      --sub: #ffcf00;
+      --bg: #fffcf5;
+      --msg-bot: #ffffff;
+      --msg-user: #00469b;
+    }
 
-        #chat-container { 
-            flex: 1; width: 100%; max-width: 480px; margin: 0 auto; 
-            background: white; display: flex; flex-direction: column; 
-            position: relative; box-shadow: 0 4px 30px rgba(0,0,0,0.05);
-            height: 100%; 
-        }
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
 
-        .campaign-banner {
-            background: linear-gradient(45deg, #d4af37, #f9f1c0, #d4af37);
-            background-size: 200% auto;
-            animation: shine 3s linear infinite;
-            color: #542d05;
-            padding: 8px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 11;
-            border-bottom: 1px solid #c5a028;
-        }
-        @keyframes shine { to { background-position: 200% center; } }
+    #chat-container {
+      flex: 1;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+      height: 100%;
+    }
 
-        .header { 
-            background: linear-gradient(135deg, #00469b, #0056b3); 
-            color: white; padding: 12px; text-align: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            z-index: 10;
-            flex-shrink: 0; 
-        }
-        .header h1 { font-size: 16px; margin: 0; letter-spacing: 0.5px; }
-        .header p { margin: 4px 0 0; font-size: 10px; opacity: 0.9; }
+    .campaign-banner {
+      background: linear-gradient(45deg, #d4af37, #f9f1c0, #d4af37);
+      background-size: 200% auto;
+      animation: shine 3s linear infinite;
+      color: #542d05;
+      padding: 8px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 11;
+      border-bottom: 1px solid #c5a028;
+    }
+    @keyframes shine { to { background-position: 200% center; } }
 
-        #chat-log { 
-            flex: 1; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
-            padding: 20px 15px; 
-            display: flex; flex-direction: column; gap: 20px; 
-            background: var(--bg);
-            padding-bottom: 40px; 
-        }
+    .header {
+      background: linear-gradient(135deg, #00469b, #0056b3);
+      color: white;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      z-index: 10;
+      flex-shrink: 0;
+    }
+    .header h1 { font-size: 16px; margin: 0; letter-spacing: 0.5px; }
+    .header p { margin: 4px 0 0; font-size: 10px; opacity: 0.9; }
 
-        .chat-row { display: flex; align-items: flex-start; gap: 10px; animation: fadeIn 0.4s ease-out; }
-        .chat-row.user { justify-content: flex-end; }
+    #chat-log {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 20px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: var(--bg);
+      padding-bottom: 40px;
+    }
 
-        .bot-container { display: flex; flex-direction: column; align-items: center; width: 55px; flex-shrink: 0; }
-        .bot-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); object-fit: cover; background: #eee; }
-        .bot-name { font-size: 9px; color: #555; margin-top: 4px; text-align: center; line-height: 1.2; font-weight: bold; }
+    .chat-row { display: flex; align-items: flex-start; gap: 10px; animation: fadeIn 0.4s ease-out; }
+    .chat-row.user { justify-content: flex-end; }
 
-        .msg { max-width: 78%; padding: 12px 16px; font-size: 15px; line-height: 1.6; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); word-wrap: break-word; }
-        .bot { background: var(--msg-bot); border-radius: 4px 20px 20px 20px; color: #444; border: 1px solid #f0eddf; margin-top: 10px; }
-        .user { background: var(--msg-user); color: white; border-radius: 20px 20px 4px 20px; }
-        
-        .alert-text { color: #d93025; font-weight: bold; border-bottom: 1px solid #d93025; }
-        .msg strong { color: #000; font-weight: bold; }
-        .msg a { color: #00469b; text-decoration: underline; }
+    .bot-container { display: flex; flex-direction: column; align-items: center; width: 55px; flex-shrink: 0; }
+    .bot-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); object-fit: cover; background: #eee; }
+    .bot-name { font-size: 9px; color: #555; margin-top: 4px; text-align: center; line-height: 1.2; font-weight: bold; }
 
-        /* 動画埋め込み用のスタイル */
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9のアスペクト比 */
-            height: 0;
-            overflow: hidden;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+    .msg {
+      max-width: 78%;
+      padding: 12px 16px;
+      font-size: 15px;
+      line-height: 1.6;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      word-wrap: break-word;
+    }
+    .bot { background: var(--msg-bot); border-radius: 4px 20px 20px 20px; color: #444; border: 1px solid #f0eddf; margin-top: 10px; }
+    .user { background: var(--msg-user); color: white; border-radius: 20px 20px 4px 20px; }
 
-        #input-area { padding: 15px; border-top: 1px solid #f0eddf; background: #fff; border-radius: 20px 20px 0 0; z-index: 20; flex-shrink: 0; }
-        .options { display: flex; flex-direction: column; gap: 8px; }
-        .opt-btn { background: #fff; border: 2px solid var(--main); color: var(--main); padding: 12px; border-radius: 12px; cursor: pointer; font-weight: bold; text-align: center; font-size: 14px; transition: 0.3s; }
-        .opt-btn:hover { background: #f0f7ff; transform: translateY(-1px); }
+    .alert-text { color: #d93025; font-weight: bold; border-bottom: 1px solid #d93025; }
+    .msg strong { color: #000; font-weight: bold; }
+    .msg a { color: #00469b; text-decoration: underline; }
 
-        input, textarea { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; box-sizing: border-box; font-size: 16px; margin-bottom: 10px; font-family: inherit; }
-        input:focus, textarea:focus { border-color: var(--main); outline: none; background: #fdfdff; }
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid #ddd;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
 
-        .btn-group { display: flex; gap: 10px; }
-        .next-btn { flex: 2; background: var(--sub); border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer; color: #333; box-shadow: 0 4px 0 #e6ba00; }
-        .next-btn:active { transform: translateY(2px); box-shadow: none; }
-        .back-btn { flex: 1; background: #f5f5f5; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer; color: #777; }
+    #input-area {
+      padding: 15px;
+      border-top: 1px solid #f0eddf;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .opt-btn {
+      background: #fff;
+      border: 2px solid var(--main);
+      color: var(--main);
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+    .opt-btn:hover { background: #f0f7ff; transform: translateY(-1px); }
 
-        .hp-link-btn { display: block; background: #fff; border: 2px solid var(--main); color: var(--main); padding: 12px; border-radius: 12px; text-decoration: none; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; }
-        .footer-company { text-align: center; padding: 10px; font-size: 10px; background: white; color: #999; border-top: 1px solid #eee; flex-shrink: 0; }
+    input, textarea {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      box-sizing: border-box;
+      font-size: 16px;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus { border-color: var(--main); outline: none; background: #fdfdff; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .typing { display: flex; gap: 5px; padding: 10px; }
-        .typing span { width: 8px; height: 8px; background: #d0d0d0; border-radius: 50%; animation: blink 1.2s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-    </style>
+    .btn-group { display: flex; gap: 10px; }
+    .next-btn {
+      flex: 2;
+      background: var(--sub);
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      color: #333;
+      box-shadow: 0 4px 0 #e6ba00;
+    }
+    .next-btn:active { transform: translateY(2px); box-shadow: none; }
+    .back-btn {
+      flex: 1;
+      background: #f5f5f5;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      color: #777;
+    }
+
+    .hp-link-btn {
+      display: block;
+      background: #fff;
+      border: 2px solid var(--main);
+      color: var(--main);
+      padding: 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .footer-company {
+      text-align: center;
+      padding: 10px;
+      font-size: 10px;
+      background: white;
+      color: #999;
+      border-top: 1px solid #eee;
+      flex-shrink: 0;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .typing { display: flex; gap: 5px; padding: 10px; }
+    .typing span { width: 8px; height: 8px; background: #d0d0d0; border-radius: 50%; animation: blink 1.2s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+  </style>
 </head>
-<body>
 
-<div id="chat-container">
+<body>
+  <div id="chat-container">
     <div class="campaign-banner">🎁 査定面談完了でAmazonギフトカード1万円分進呈中✨</div>
+
     <div class="header">
-        <h1>🏠 1分で完結！簡単査定</h1>
-        <p>by 株式会社トリニティ</p>
+      <h1>🏠 1分で完結！簡単査定</h1>
+      <p>by 株式会社トリニティ</p>
     </div>
+
     <div id="chat-log"></div>
     <div id="input-area"><div id="controls"></div></div>
-    <div class="footer-company"><a href="https://trinity-111.com" target="_blank" style="color:#666; font-weight:bold;">株式会社トリニティ 公式ホームページ</a></div>
-</div>
 
-<script>
+    <div class="footer-company">
+      <a href="https://trinity-111.com" target="_blank" style="color:#666; font-weight:bold;">
+        株式会社トリニティ 公式ホームページ
+      </a>
+    </div>
+  </div>
+
+  <script>
     const log = document.getElementById('chat-log');
     const controls = document.getElementById('controls');
     let userData = {};
     let currentStep = 0;
+
+    // アイコン画像（同階層に icon.png を置いてね）
     const iconImage = "./icon.png";
 
     const allSteps = [
-        { 
-            id: 'intent', 
-            msg: 'こんにちは！査定担当の荒木です。<br><br>ご入力いただく個人情報は<strong>【秘密厳守】</strong>で管理し、強引な営業電話などは一切いたしません。安心してご利用ください。<br><span style="font-size:12px">🔗 <a href="https://trinity-111.com" target="_blank">プライバシーポリシー</a></span><br><br>まずは、現在のご検討状況を教えていただけますか？', 
-            type: 'options', 
-            options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい', '別住所の空き家を相談したい'] 
-        },
-        { 
-            id: 'akiya_warning',
-            msg: '空き家のご相談ですね。実は今、放置リスクが非常に高まっています。<br><br>🚨 <span class="alert-text">相続登記の義務化</span>により、放置すると過料（罰則）の対象に。<br>🚨 特定空き家指定で<span class="alert-text">固定資産税が最大6倍</span>に跳ね上がります。<br><br>不法投棄や害虫の発生で近隣トラブルになる前に、一度出口戦略を立てませんか？（全国対応可能です！）',
-            type: 'options',
-            options: ['リスクを確認して査定に進む'],
-            condition: () => userData.intent === '別住所の空き家を相談したい'
-        },
-        { 
-            id: 'fast_warning',
-            msg: '「すぐに」というご判断、素晴らしいです！<br><br>昨今の<span class="alert-text">金利上昇</span>により、不動産相場の先行きは不透明になりつつあります。だからこそ、<strong>「今」が最も高く売れるチャンス</strong>かもしれません。<br><br>最適なプランをご提案しますので、まずは価格を確認しましょう！',
-            type: 'options',
-            options: ['査定に進む'],
-            condition: () => userData.intent === 'すぐに売りたい'
-        },
-        { 
-            id: 'mid_warning',
-            msg: '半年以内のご検討ですね。非常に賢明です。<br><br>しかし、<span class="alert-text">金利の上昇局面</span>に入り、半年後の相場は読みづらくなっています。早めに現在の価値を知っておくことで、余裕を持ってプランを立てられます。まずは現状を把握しましょう。',
-            type: 'options',
-            options: ['査定に進む'],
-            condition: () => userData.intent === '半年以内に検討したい'
-        },
-        { 
-            id: 'market_warning',
-            msg: '相場の把握、とても大切です！<br><br>将来的に空き家になれば<span class="alert-text">固定資産税の負担増</span>なども考えられます。<strong>「今の価値」を知っておくことが最大の防御策</strong>です。リスク回避のためにも確認しておきましょう！',
-            type: 'options',
-            options: ['無料で相場を確認する'],
-            condition: () => userData.intent === 'まずは相場を知りたい'
-        },
-        { 
-            id: 'type', 
-            msg: '承知いたしました！物件の種別はどちらでしょうか？', 
-            type: 'options', 
-            options: ['マンション', '一戸建て', '土地', 'その他'] 
-        },
-        { 
-            id: 'zip', 
-            msg: 'ありがとうございます。郵便番号を7桁で入力していただけますか？住所を自動でお呼びします。', 
-            type: 'number', 
-            placeholder: '例: 1234567',
-            condition: () => userData.intent !== '別住所の空き家を相談したい'
-        },
-        { 
-            id: 'address', 
-            msg: (u) => userData.intent === '別住所の空き家を相談したい' 
-                ? '空き家の住所（都道府県・市区町村から）を教えてください。' 
-                : '住所や建物名に間違いはありませんか？修正も可能です。<br><br><strong>※マンションの場合は、号室までご記入ください。</strong>', 
-            type: 'text', 
-            placeholder: '例: 東京都港区〇〇 〇〇マンション 402号室' 
-        },
-        { id: 'unit_type', msg: '面積の単位はどちらがわかりやすいですか？', type: 'options', options: ['㎡（平米）', '坪（つぼ）'] },
-        { id: 'area_val', msg: 'おおよその面積を教えていただけますか？', type: 'number', placeholder: '数字を入力してください', suffix: () => userData.unit_type },
-        { id: 'house_building_msg', msg: '建物（戸建て）の面積も教えていただけますか？', type: 'number', placeholder: '数字を入力してください', condition: () => userData.type === '一戸建て', suffix: () => userData.unit_type },
-        { id: 'other_detail', msg: 'ご相談内容（例：店舗、共有名義、空き家の状態など）を詳しく教えていただけますか？', type: 'textarea', placeholder: 'こちらにご記入ください', condition: () => userData.type === 'その他' || userData.intent === '別住所の空き家を相談したい' },
-        { id: 'calculating', msg: 'ありがとうございます。ただいま最新の相場事例とリスク回避策を一生懸命チェックしています...', type: 'loading', duration: 2000 },
-        { id: 'name', msg: 'お待たせしました！算出の準備が整いました。最後にお名前をお願いします。', type: 'text', placeholder: '例: 田中 太郎' },
-        { id: 'tel', msg: 'ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心ください。', type: 'tel', placeholder: '例: 09012345678' },
-        { id: 'email', msg: '最後です！査定結果をお送りするメールアドレスを教えていただけますか？', type: 'email', placeholder: '例: mail@example.com' },
-        { 
-            id: 'finish', 
-            msg: 'すべて完了しました！お疲れ様でした！特典のAmazonギフトカード1万円分も面談完了時に進呈いたします。<br><br>▼ トリニティの想い（動画 3秒〜）<br><div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/IFcxSeXWO1w?start=3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>', 
-            type: 'final' 
-        }
+      {
+        id: 'intent',
+        msg: 'こんにちは！査定担当の荒木です。<br><br>ご入力いただく個人情報は<strong>【秘密厳守】</strong>で管理し、強引な営業電話などは一切いたしません。安心してご利用ください。<br><span style="font-size:12px">🔗 <a href="https://trinity-111.com" target="_blank">プライバシーポリシー</a></span><br><br>まずは、現在のご検討状況を教えていただけますか？',
+        type: 'options',
+        options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい', '別住所の空き家を相談したい']
+      },
+      {
+        id: 'akiya_warning',
+        msg: '空き家のご相談ですね。実は今、放置リスクが非常に高まっています。<br><br>🚨 <span class="alert-text">相続登記の義務化</span>により、放置すると過料（罰則）の対象に。<br>🚨 特定空き家指定で<span class="alert-text">固定資産税が最大6倍</span>に跳ね上がります。<br><br>不法投棄や害虫の発生で近隣トラブルになる前に、一度出口戦略を立てませんか？（全国対応可能です！）',
+        type: 'options',
+        options: ['リスクを確認して査定に進む'],
+        condition: () => userData.intent === '別住所の空き家を相談したい'
+      },
+      {
+        id: 'fast_warning',
+        msg: '「すぐに」というご判断、素晴らしいです！<br><br>昨今の<span class="alert-text">金利上昇</span>により、不動産相場の先行きは不透明になりつつあります。だからこそ、<strong>「今」が最も高く売れるチャンス</strong>かもしれません。<br><br>最適なプランをご提案しますので、まずは価格を確認しましょう！',
+        type: 'options',
+        options: ['査定に進む'],
+        condition: () => userData.intent === 'すぐに売りたい'
+      },
+      {
+        id: 'mid_warning',
+        msg: '半年以内のご検討ですね。非常に賢明です。<br><br>しかし、<span class="alert-text">金利の上昇局面</span>に入り、半年後の相場は読みづらくなっています。早めに現在の価値を知っておくことで、余裕を持ってプランを立てられます。まずは現状を把握しましょう。',
+        type: 'options',
+        options: ['査定に進む'],
+        condition: () => userData.intent === '半年以内に検討したい'
+      },
+      {
+        id: 'market_warning',
+        msg: '相場の把握、とても大切です！<br><br>将来的に空き家になれば<span class="alert-text">固定資産税の負担増</span>なども考えられます。<strong>「今の価値」を知っておくことが最大の防御策</strong>です。リスク回避のためにも確認しておきましょう！',
+        type: 'options',
+        options: ['無料で相場を確認する'],
+        condition: () => userData.intent === 'まずは相場を知りたい'
+      },
+      {
+        id: 'type',
+        msg: '承知いたしました！物件の種別はどちらでしょうか？',
+        type: 'options',
+        options: ['マンション', '一戸建て', '土地', 'その他']
+      },
+      {
+        id: 'zip',
+        msg: 'ありがとうございます。郵便番号を7桁で入力していただけますか？住所を自動でお呼びします。',
+        type: 'number',
+        placeholder: '例: 1234567',
+        condition: () => userData.intent !== '別住所の空き家を相談したい'
+      },
+      {
+        id: 'address',
+        msg: () => userData.intent === '別住所の空き家を相談したい'
+          ? '空き家の住所（都道府県・市区町村から）を教えてください。'
+          : '住所や建物名に間違いはありませんか？修正も可能です。<br><br><strong>※マンションの場合は、号室までご記入ください。</strong>',
+        type: 'text',
+        placeholder: '例: 東京都港区〇〇 〇〇マンション 402号室'
+      },
+      { id: 'unit_type', msg: '面積の単位はどちらがわかりやすいですか？', type: 'options', options: ['㎡（平米）', '坪（つぼ）'] },
+      { id: 'area_val', msg: 'おおよその面積を教えていただけますか？', type: 'number', placeholder: '数字を入力してください', suffix: () => userData.unit_type || '' },
+      { id: 'house_building_msg', msg: '建物（戸建て）の面積も教えていただけますか？', type: 'number', placeholder: '数字を入力してください', condition: () => userData.type === '一戸建て', suffix: () => userData.unit_type || '' },
+      { id: 'other_detail', msg: 'ご相談内容（例：店舗、共有名義、空き家の状態など）を詳しく教えていただけますか？', type: 'textarea', placeholder: 'こちらにご記入ください', condition: () => userData.type === 'その他' || userData.intent === '別住所の空き家を相談したい' },
+      { id: 'calculating', msg: 'ありがとうございます。ただいま最新の相場事例とリスク回避策を一生懸命チェックしています...', type: 'loading', duration: 2000 },
+      { id: 'name', msg: 'お待たせしました！算出の準備が整いました。最後にお名前をお願いします。', type: 'text', placeholder: '例: 田中 太郎' },
+      { id: 'tel', msg: 'ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心ください。', type: 'tel', placeholder: '例: 09012345678' },
+      { id: 'email', msg: '最後です！査定結果をお送りするメールアドレスを教えていただけますか？', type: 'email', placeholder: '例: mail@example.com' },
+      {
+        id: 'finish',
+        msg: 'すべて完了しました！お疲れ様でした！特典のAmazonギフトカード1万円分も面談完了時に進呈いたします。<br><br>▼ トリニティの想い（動画 3秒〜）<br><div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/IFcxSeXWO1w?start=3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>',
+        type: 'final'
+      }
     ];
 
-    function getActiveSteps() { return allSteps.filter(s => !s.condition || s.condition()); }
+    function getActiveSteps() {
+      return allSteps.filter(s => !s.condition || s.condition());
+    }
 
     function addMessage(text, side) {
-        const row = document.createElement('div');
-        row.className = `chat-row ${side}`;
-        if (side === 'bot') {
-            const container = document.createElement('div');
-            container.className = 'bot-container';
-            container.innerHTML = `<img src="${iconImage}" class="bot-icon" alt="担当者" onerror="this.style.display='none'"><div class="bot-name">査定担当<br>荒木</div>`;
-            row.appendChild(container);
-        }
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `msg ${side}`;
-        msgDiv.innerHTML = text; 
-        row.appendChild(msgDiv);
-        log.appendChild(row);
-        scrollToBottom();
+      const row = document.createElement('div');
+      row.className = `chat-row ${side}`;
+
+      if (side === 'bot') {
+        const container = document.createElement('div');
+        container.className = 'bot-container';
+        container.innerHTML = `
+          <img src="${iconImage}" class="bot-icon" alt="担当者" onerror="this.style.display='none'">
+          <div class="bot-name">査定担当<br>荒木</div>
+        `;
+        row.appendChild(container);
+      }
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `msg ${side}`;
+      msgDiv.innerHTML = text;
+      row.appendChild(msgDiv);
+
+      log.appendChild(row);
+      scrollToBottom();
     }
 
     function scrollToBottom() { log.scrollTop = log.scrollHeight; }
 
     async function handleInput(val) {
-        const activeSteps = getActiveSteps();
-        const value = val || document.getElementById('input-field')?.value || "";
-        if (!value && activeSteps[currentStep].type !== 'loading') return;
-        userData[activeSteps[currentStep].id] = value;
-        
+      const activeSteps = getActiveSteps();
+      const step = activeSteps[currentStep];
+
+      const value = val ?? document.getElementById('input-field')?.value ?? "";
+      if (!value && step.type !== 'loading') return;
+
+      userData[step.id] = value;
+
+      // user message
+      const row = document.createElement('div');
+      row.className = `chat-row user`;
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `msg user`;
+      msgDiv.innerText = value + (step.suffix ? step.suffix() : "");
+      row.appendChild(msgDiv);
+      log.appendChild(row);
+      scrollToBottom();
+
+      // zip auto address
+      if (step.id === 'zip') {
+        try {
+          const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${value}`);
+          const data = await res.json();
+          if (data.results) {
+            const r = data.results[0];
+            userData['address_auto'] = r.address1 + r.address2 + r.address3;
+          }
+        } catch (e) {}
+      }
+
+      currentStep++;
+      showStep();
+    }
+
+    function goBack() {
+      if (currentStep <= 0) return;
+
+      currentStep--;
+      const activeSteps = getActiveSteps();
+      log.innerHTML = "";
+
+      for (let i = 0; i < currentStep; i++) {
+        const msgText = typeof activeSteps[i].msg === 'function' ? activeSteps[i].msg() : activeSteps[i].msg;
+        addMessage(msgText, 'bot');
+
         const row = document.createElement('div');
         row.className = `chat-row user`;
         const msgDiv = document.createElement('div');
         msgDiv.className = `msg user`;
-        msgDiv.innerText = value + (activeSteps[currentStep].suffix ? activeSteps[currentStep].suffix() : "");
+        msgDiv.innerText = (userData[activeSteps[i].id] ?? "") + (activeSteps[i].suffix ? activeSteps[i].suffix() : "");
         row.appendChild(msgDiv);
         log.appendChild(row);
-        scrollToBottom();
+      }
 
-        if (activeSteps[currentStep].id === 'zip') {
-            try {
-                const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${value}`);
-                const data = await res.json();
-                if (data.results) {
-                    const r = data.results[0];
-                    userData['address_auto'] = r.address1 + r.address2 + r.address3;
-                }
-            } catch(e) {}
-        }
-        currentStep++;
-        showStep();
-    }
-
-    function goBack() {
-        if (currentStep > 0) {
-            currentStep--;
-            const activeSteps = getActiveSteps();
-            log.innerHTML = "";
-            for(let i=0; i<currentStep; i++) {
-                const msgText = typeof activeSteps[i].msg === 'function' ? activeSteps[i].msg() : activeSteps[i].msg;
-                addMessage(msgText, 'bot');
-                const row = document.createElement('div');
-                row.className = `chat-row user`;
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `msg user`;
-                msgDiv.innerText = userData[activeSteps[i].id] + (activeSteps[i].suffix ? activeSteps[i].suffix() : "");
-                row.appendChild(msgDiv);
-                log.appendChild(row);
-            }
-            scrollToBottom();
-            showStep();
-        }
+      scrollToBottom();
+      showStep();
     }
 
     function showStep() {
-        const activeSteps = getActiveSteps();
-        if (currentStep >= activeSteps.length) return;
-        const step = activeSteps[currentStep];
-        const msgText = typeof step.msg === 'function' ? step.msg() : step.msg;
-        addMessage(msgText, 'bot');
+      const activeSteps = getActiveSteps();
+      if (currentStep >= activeSteps.length) return;
+
+      const step = activeSteps[currentStep];
+      const msgText = typeof step.msg === 'function' ? step.msg() : step.msg;
+
+      addMessage(msgText, 'bot');
+      scrollToBottom();
+
+      if (step.type === 'loading') {
+        controls.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+        setTimeout(() => { currentStep++; showStep(); }, step.duration);
+        return;
+      }
+
+      if (step.type === 'options') {
+        let html = '<div class="options">';
+        step.options.forEach(opt => html += `<button class="opt-btn" onclick="handleInput('${opt}')">${opt}</button>`);
+        if (currentStep > 0) html += `<button class="back-btn" onclick="goBack()" style="margin-top:5px;">← 前へ戻る</button>`;
+        html += '</div>';
+        controls.innerHTML = html;
+        return;
+      }
+
+      if (step.type === 'final') {
+        controls.innerHTML = `
+          <a href="https://trinity-111.com" target="_blank" class="hp-link-btn">株式会社トリニティ 公式サイト</a>
+          <button class="next-btn" onclick="location.reload()">最初からやり直す</button>
+        `;
+
+        // ★送信（安定のHTMLフォームPOST方式）— 少し遅らせて確実に
+        setTimeout(sendDataToGoogle, 300);
+        return;
+      }
+
+      const val = (step.id === 'address' && userData['address_auto']) ? userData['address_auto'] : "";
+      const inputHtml = step.type === 'textarea'
+        ? `<textarea id="input-field" rows="3" placeholder="${step.placeholder}">${val}</textarea>`
+        : `<div style="position:relative;">
+             <input type="${step.type}" id="input-field" placeholder="${step.placeholder}" value="${val}">
+             ${step.suffix ? `<span style="position:absolute; right:15px; top:14px; color:#888;">${step.suffix()}</span>` : ''}
+           </div>`;
+
+      controls.innerHTML = `
+        ${inputHtml}
+        <div class="btn-group">
+          <button class="back-btn" onclick="goBack()">戻る</button>
+          <button class="next-btn" onclick="handleInput()">次へ進む</button>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const input = document.getElementById('input-field');
+        if (input) input.focus();
         scrollToBottom();
-        if (step.type === 'loading') {
-            controls.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
-            scrollToBottom();
-            setTimeout(() => { currentStep++; showStep(); }, step.duration);
-            return;
-        }
-        if (step.type === 'options') {
-            let html = '<div class="options">';
-            step.options.forEach(opt => html += `<button class="opt-btn" onclick="handleInput('${opt}')">${opt}</button>`);
-            if (currentStep > 0) html += `<button class="back-btn" onclick="goBack()" style="margin-top:5px;">← 前へ戻る</button>`;
-            html += '</div>';
-            controls.innerHTML = html;
-        } else if (step.type === 'final') {
-            controls.innerHTML = `<a href="https://trinity-111.com" target="_blank" class="hp-link-btn">株式会社トリニティ 公式サイト</a><button class="next-btn" onclick="location.reload()">最初からやり直す</button>`;
-            sendDataToGoogle(); 
-        } else {
-            const val = (step.id === 'address' && userData['address_auto']) ? userData['address_auto'] : "";
-            const inputHtml = step.type === 'textarea' 
-                ? `<textarea id="input-field" rows="3" placeholder="${step.placeholder}">${val}</textarea>`
-                : `<div style="position:relative;"><input type="${step.type}" id="input-field" placeholder="${step.placeholder}" value="${val}">${step.suffix ? `<span style="position:absolute; right:15px; top:14px; color:#888;">${step.suffix()}</span>` : ''}</div>`;
-            
-            controls.innerHTML = `
-                ${inputHtml}
-                <div class="btn-group">
-                    <button class="back-btn" onclick="goBack()">戻る</button>
-                    <button class="next-btn" onclick="handleInput()">次へ進む</button>
-                </div>
-            `;
-            setTimeout(() => { const input = document.getElementById('input-field'); input.focus(); scrollToBottom(); }, 100);
-        }
+      }, 100);
     }
 
-    // ★解析した新しいフォームIDとEntryIDを適用済み
+    // =========================
+    // Googleフォーム送信（安定版）
+    // =========================
     function sendDataToGoogle() {
-        const formId = "1FAIpQLSe5LI4Lh7q04dEJjWibHyRqCDvKeU__GsOFj6TtKwVoUXOcag";
-        const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
-        
-        const params = new URLSearchParams();
-        
-        // いただいたURLから解析した正しいEntryIDです
-        let intentVal = userData.intent || "";
-        if(userData.other_detail) {
-            intentVal += " (詳細: " + userData.other_detail + ")";
-        }
-        params.append('entry.39702896', intentVal);          // 1. 検討状況
-        params.append('entry.1956018558', userData.type || "");     // 2. 物件種別
-        params.append('entry.1184450983', userData.zip || "");      // 3. 郵便番号
-        params.append('entry.436082943', userData.address || "");   // 4. 住所
-        
-        // 5. 面積（単位も結合して送信）
-        let areaStr = userData.area_val || "";
-        if(userData.unit_type) areaStr += userData.unit_type;
-        params.append('entry.159085778', areaStr);
-        
-        params.append('entry.1607874063', userData.name || "");     // 6. 名前
-        params.append('entry.996995416', userData.tel || "");       // 7. 電話番号
-        params.append('entry.427371744', userData.email || "");     // 8. メール
+      // ★複製後フォームID（あなたが貼ってくれたもの）
+      const formId = "1FAIpQLScD7gFXpxlOte8FQHWAlm4Xv0MJH7MoqAuIwAimXlwZvNLNsA";
+      const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
 
-        fetch(formUrl, { method: 'POST', mode: 'no-cors', body: params })
-        .then(() => { console.log("送信成功"); })
-        .catch(err => console.error("送信エラー", err));
+      // hidden iframe（画面遷移しない）
+      let iframe = document.getElementById("hidden_iframe");
+      if (!iframe) {
+        iframe = document.createElement("iframe");
+        iframe.name = "hidden_iframe";
+        iframe.id = "hidden_iframe";
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+      }
+
+      const form = document.createElement("form");
+      form.action = formUrl;
+      form.method = "POST";
+      form.target = "hidden_iframe";
+
+      const add = (name, value) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value ?? "";
+        form.appendChild(input);
+      };
+
+      // 1. 検討状況（空き家詳細を結合）
+      let intentVal = userData.intent || "";
+      if (userData.other_detail) {
+        intentVal += " (詳細: " + userData.other_detail + ")";
+      }
+
+      // entry番号（あなたの事前入力リンクと一致）
+      add("entry.39702896", intentVal);                 // 検討状況
+      add("entry.1956018558", userData.type || "");     // 物件種別
+      add("entry.1184450983", userData.zip || "");      // 郵便番号
+      add("entry.436082943", userData.address || "");   // 住所
+
+      // 面積（単位結合）
+      let areaStr = userData.area_val || "";
+      if (userData.unit_type) areaStr += userData.unit_type;
+      add("entry.159085778", areaStr);                 // 面積
+
+      add("entry.1607874063", userData.name || "");    // 名前
+      add("entry.996995416", userData.tel || "");      // 電話番号
+      add("entry.427371744", userData.email || "");    // メール
+
+      document.body.appendChild(form);
+      form.submit();
+      form.remove();
     }
-    
+
+    // 起動
     showStep();
-</script>
+  </script>
 </body>
 </html>
