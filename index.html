@@ -71,9 +71,13 @@
         .bot-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); object-fit: cover; background: #eee; }
         .bot-name { font-size: 9px; color: #555; margin-top: 4px; text-align: center; line-height: 1.2; font-weight: bold; }
 
-        .msg { max-width: 70%; padding: 12px 16px; font-size: 15px; line-height: 1.6; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); word-wrap: break-word; }
+        .msg { max-width: 78%; padding: 12px 16px; font-size: 15px; line-height: 1.6; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); word-wrap: break-word; }
         .bot { background: var(--msg-bot); border-radius: 4px 20px 20px 20px; color: #444; border: 1px solid #f0eddf; margin-top: 10px; }
         .user { background: var(--msg-user); color: white; border-radius: 20px 20px 4px 20px; }
+        
+        /* 煽り文言用の強調スタイル */
+        .alert-text { color: #d93025; font-weight: bold; border-bottom: 1px solid #d93025; }
+        .msg strong { color: #000; }
         .msg a { color: #00469b; text-decoration: underline; }
 
         #input-area { padding: 15px; border-top: 1px solid #f0eddf; background: #fff; border-radius: 20px 20px 0 0; z-index: 20; flex-shrink: 0; }
@@ -123,27 +127,41 @@
             id: 'intent', 
             msg: 'こんにちは！査定担当の荒木です。<br><br>ご入力いただく個人情報は<strong>【秘密厳守】</strong>で管理し、強引な営業電話などは一切いたしません。安心してご利用ください。<br><span style="font-size:12px">🔗 <a href="https://www.trinity-site.jp/" target="_blank">プライバシーポリシー</a></span><br><br>まずは、現在のご検討状況を教えていただけますか？', 
             type: 'options', 
-            options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい'] 
+            options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい', '別住所の空き家を相談したい'] 
         },
-        { id: 'type', msg: '承知いたしました！物件の種別はどちらでしょうか？', type: 'options', options: ['マンション', '一戸建て', '土地', 'その他'] },
-        { id: 'zip', msg: 'ありがとうございます。郵便番号を7桁で入力していただけますか？住所を自動でお呼びします。', type: 'number', placeholder: '例: 1234567' },
+        { 
+            id: 'akiya_warning',
+            msg: '空き家のご相談ですね。実は今、放置リスクが非常に高まっています。<br><br>🚨 <span class="alert-text">相続登記の義務化</span>により、放置すると過料（罰則）の対象に。<br>🚨 特定空き家指定で<span class="alert-text">固定資産税が最大6倍</span>に跳ね上がります。<br><br>不法投棄や害虫の発生で<span class="alert-text">近隣から訴えられるケース</span>も増えています。<strong>建物の価値は1年経つごとに大きく下がります。売るなら「今」が最高値です。</strong><br><br>管理だけで赤字になる前に、一度出口戦略を立てませんか？',
+            type: 'options',
+            options: ['リスクを確認して査定に進む'],
+            condition: () => userData.intent === '別住所の空き家を相談したい'
+        },
+        { 
+            id: 'type', 
+            msg: '承知いたしました！物件の種別はどちらでしょうか？', 
+            type: 'options', 
+            options: ['マンション', '一戸建て', '土地', 'その他'] 
+        },
+        { 
+            id: 'zip', 
+            msg: 'ありがとうございます。郵便番号を7桁で入力していただけますか？住所を自動でお呼びします。', 
+            type: 'number', 
+            placeholder: '例: 1234567',
+            condition: () => userData.intent !== '別住所の空き家を相談したい'
+        },
         { 
             id: 'address', 
-            msg: '住所や建物名に間違いはありませんか？修正も可能です。<br><br><strong>※マンションの場合は、号室までご記入ください。</strong>正確な号室がわからないと査定に大きなズレが生じてしまいます。', 
+            msg: (u) => userData.intent === '別住所の空き家を相談したい' 
+                ? '空き家の住所（都道府県・市区町村から）を教えてください。<br>※空き家活用・売却は<strong>全国対応</strong>しています！' 
+                : '住所や建物名に間違いはありませんか？修正も可能です。<br><br><strong>※マンションの場合は、号室までご記入ください。</strong>正確な号室がわからないと査定に大きなズレが生じてしまいます。', 
             type: 'text', 
-            placeholder: '〇〇市〇〇町 〇〇マンション 402号室' 
+            placeholder: '例: 東京都港区〇〇 〇〇マンション 402号室' 
         },
-        
-        // 面積入力（坪/㎡選択）
         { id: 'unit_type', msg: '面積の単位はどちらがわかりやすいですか？', type: 'options', options: ['㎡（平米）', '坪（つぼ）'] },
-        
-        { id: 'area_val', msg: '面積を教えていただけますか？', type: 'number', placeholder: '数字を入力してください', suffix: () => userData.unit_type },
-
+        { id: 'area_val', msg: 'おおよその面積を教えていただけますか？', type: 'number', placeholder: '数字を入力してください', suffix: () => userData.unit_type },
         { id: 'house_building_msg', msg: 'もう少しです！一戸建ての場合は、建物の面積も教えていただけますか？', type: 'number', placeholder: '数字を入力してください', condition: () => userData.type === '一戸建て', suffix: () => userData.unit_type },
-        
-        { id: 'other_detail', msg: 'あともう一息です！ご相談内容（例：店舗、倉庫、共有名義など）を詳しく教えていただけますか？', type: 'textarea', placeholder: 'こちらにご記入ください', condition: () => userData.type === 'その他' },
-
-        { id: 'calculating', msg: 'ありがとうございます。入力も終盤です！ただいまAIが周辺の最新事例を一生懸命チェックしています...', type: 'loading', duration: 2500 },
+        { id: 'other_detail', msg: 'あともう一息です！ご相談内容（例：店舗、倉庫、共有名義、空き家の状態など）を詳しく教えていただけますか？', type: 'textarea', placeholder: 'こちらにご記入ください', condition: () => userData.type === 'その他' || userData.intent === '別住所の空き家を相談したい' },
+        { id: 'calculating', msg: 'ありがとうございます。入力も終盤です！ただいま最新の相場事例とリスク回避策を一生懸命チェックしています...', type: 'loading', duration: 2500 },
         { id: 'name', msg: 'お待たせしました！算出の準備が整いました。最後にお客様の情報を伺います。まずはお名前をお願いします。', type: 'text', placeholder: '例: 田中 太郎' },
         { id: 'tel', msg: 'もう少しです！ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心ください。', type: 'tel', placeholder: '例: 09012345678' },
         { id: 'email', msg: 'これが最後の項目です！査定結果をお送りするメールアドレスを教えていただけますか？', type: 'email', placeholder: '例: mail@example.com' },
@@ -206,7 +224,8 @@
             const activeSteps = getActiveSteps();
             log.innerHTML = "";
             for(let i=0; i<currentStep; i++) {
-                addMessage(activeSteps[i].msg, 'bot');
+                const msgText = typeof activeSteps[i].msg === 'function' ? activeSteps[i].msg() : activeSteps[i].msg;
+                addMessage(msgText, 'bot');
                 const row = document.createElement('div');
                 row.className = `chat-row user`;
                 const msgDiv = document.createElement('div');
@@ -222,8 +241,10 @@
 
     function showStep() {
         const activeSteps = getActiveSteps();
+        if (currentStep >= activeSteps.length) return;
         const step = activeSteps[currentStep];
-        addMessage(step.msg, 'bot');
+        const msgText = typeof step.msg === 'function' ? step.msg() : step.msg;
+        addMessage(msgText, 'bot');
         scrollToBottom();
         if (step.type === 'loading') {
             controls.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
