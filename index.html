@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1分で完結！簡単査定 | 株式会社トリニティ</title>
+    <style>
+        /* デザイン設定 */
+        :root { 
+            --main: #00469b; /* トリニティブルー */
+            --sub: #ffcf00;  /* アクセントイエロー */
+            --bg: #fffcf5;   /* 優しい背景色 */
+            --msg-bot: #ffffff; 
+            --msg-user: #00469b;
+        }
+        
+        body { 
+            font-family: "Helvetica Neue", Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 0; 
+            display: flex; flex-direction: column; 
+            height: 100vh; overflow: hidden; 
+        }
+
+        #chat-container { 
+            flex: 1; width: 100%; max-width: 480px; margin: 0 auto; 
+            background: white; display: flex; flex-direction: column; 
+            position: relative; box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+        }
+
+        /* ヘッダー */
+        .header { 
+            background: linear-gradient(135deg, #00469b, #0056b3); 
+            color: white; padding: 15px; text-align: center; 
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .header h1 { font-size: 16px; margin: 0; letter-spacing: 0.5px; }
+        .header p { margin: 4px 0 0; font-size: 10px; opacity: 0.9; }
+
+        /* チャットエリア */
+        #chat-log { 
+            flex: 1; overflow-y: auto; padding: 20px; 
+            display: flex; flex-direction: column; gap: 20px; 
+            background: var(--bg);
+        }
+
+        /* チャットの行（アイコンと吹き出しのセット） */
+        .chat-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .chat-row.user {
+            justify-content: flex-end;
+        }
+
+        /* アイコン画像のデザイン */
+        .bot-icon {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            object-fit: cover;
+            background: #eee; /* 画像読み込み前の色 */
+        }
+
+        /* 吹き出し */
+        .msg { 
+            max-width: 75%; padding: 14px 18px; 
+            font-size: 15px; line-height: 1.6; 
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .bot { 
+            background: var(--msg-bot); 
+            border-radius: 4px 20px 20px 20px; /* 左上だけ尖らせる */
+            color: #444; border: 1px solid #f0eddf;
+        }
+        .user { 
+            background: var(--msg-user); color: white; 
+            border-radius: 20px 20px 4px 20px; /* 右下だけ尖らせる */
+        }
+
+        /* 入力エリア */
+        #input-area { 
+            padding: 20px; border-top: 1px solid #f0eddf; 
+            background: #fff; border-radius: 20px 20px 0 0;
+            z-index: 20;
+        }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .opt-btn { 
+            background: #fff; border: 2px solid var(--main); 
+            color: var(--main); padding: 14px; border-radius: 12px; 
+            cursor: pointer; font-weight: bold; text-align: center; 
+            font-size: 15px; transition: 0.3s;
+        }
+        .opt-btn:hover { background: #f0f7ff; transform: translateY(-1px); }
+
+        input { 
+            width: 100%; padding: 16px; border: 2px solid #e0e0e0; 
+            border-radius: 12px; box-sizing: border-box; font-size: 16px; 
+            margin-bottom: 12px; transition: 0.3s;
+        }
+        input:focus { border-color: var(--main); outline: none; background: #fdfdff; }
+
+        .btn-group { display: flex; gap: 12px; }
+        .next-btn { 
+            flex: 2; background: var(--sub); border: none; 
+            padding: 16px; border-radius: 12px; font-weight: bold; 
+            font-size: 16px; cursor: pointer; color: #333;
+            box-shadow: 0 4px 0 #e6ba00;
+        }
+        .next-btn:active { transform: translateY(2px); box-shadow: none; }
+        .back-btn { 
+            flex: 1; background: #f5f5f5; border: none; 
+            padding: 16px; border-radius: 12px; font-weight: bold; 
+            font-size: 14px; cursor: pointer; color: #777;
+        }
+
+        .hp-link-btn { 
+            display: block; background: #fff; border: 2px solid var(--main); 
+            color: var(--main); padding: 14px; border-radius: 12px; 
+            text-decoration: none; text-align: center; font-weight: bold; 
+            margin-bottom: 12px; font-size: 14px; 
+        }
+
+        .footer-company { 
+            text-align: center; padding: 15px; font-size: 11px; 
+            background: white; color: #999; border-top: 1px solid #eee;
+        }
+        .footer-company a { color: #666; text-decoration: underline; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .typing { display: flex; gap: 5px; padding: 10px; }
+        .typing span { width: 8px; height: 8px; background: #d0d0d0; border-radius: 50%; animation: blink 1.2s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <div class="header">
+        <h1>🏠 1分で完結！簡単査定</h1>
+        <p>by 株式会社トリニティ</p>
+    </div>
+    
+    <div id="chat-log"></div>
+    <div id="input-area"><div id="controls"></div></div>
+    
+    <div class="footer-company">
+        <a href="https://www.trinity-site.jp/" target="_blank">株式会社トリニティ 公式ホームページ</a>
+    </div>
+</div>
+
+<script>
+    const log = document.getElementById('chat-log');
+    const controls = document.getElementById('controls');
+    let userData = {};
+    let currentStep = 0;
+
+    // ★★★ ここで画像のファイル名を指定します ★★★
+    // GitHubにアップしたファイル名と完全に同じにしてください
+    const iconImage = "./icon.png";
+
+    const allSteps = [
+        { id: 'intent', msg: 'こんにちは！本日は大切なご所有物件の査定ですね。まずは現在のご検討状況を教えていただけますか？', type: 'options', options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい'] },
+        { id: 'type', msg: '承知いたしました。物件の種別はどちらでしょうか？', type: 'options', options: ['マンション', '一戸建て', '土地・その他'] },
+        { id: 'zip', msg: 'ありがとうございます。郵便番号を7桁で入力していただけますか？住所を自動でお呼びします。', type: 'number', placeholder: '例: 1234567' },
+        { id: 'address', msg: '住所や建物名、お部屋番号に間違いはありませんか？もし違っていれば修正をお願いします。', type: 'text', placeholder: '〇〇市〇〇町 〇〇マンション 402号室' },
+        
+        { id: 'area_mansion', msg: '専有面積(㎡)を教えていただけますか？', type: 'number', placeholder: '例: 75', condition: () => userData.type === 'マンション' },
+        
+        { id: 'land_area', msg: '土地の面積(㎡)を教えていただけますか？', type: 'number', placeholder: '例: 100', condition: () => userData.type === '一戸建て' },
+        { id: 'building_area', msg: '建物の面積(㎡)も教えていただけますか？', type: 'number', placeholder: '例: 90', condition: () => userData.type === '一戸建て' },
+
+        { id: 'calculating', msg: 'ありがとうございます。ただいまAIが周辺の最新事例を一生懸命チェックしています...', type: 'loading', duration: 2500 },
+        { id: 'name', msg: 'お待たせしました！算出の準備が整いました。最後にお客様の情報を伺います。まずはお名前をお願いします。', type: 'text', placeholder: '例: 田中 太郎' },
+        { id: 'tel', msg: 'ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心くださいね。', type: 'tel', placeholder: '例: 09012345678' },
+        { id: 'email', msg: '査定結果をお送りするメールアドレスを教えていただけますか？', type: 'email', placeholder: '例: mail@example.com' },
+        { id: 'finish', msg: 'ありがとうございます！すべて受け付けました。特典のアマギフ1万円分も面談完了時に進呈いたします。2営業日以内に詳細レポートをお届けしますので、楽しみにお待ちください！', type: 'final' }
+    ];
+
+    function getActiveSteps() {
+        return allSteps.filter(s => !s.condition || s.condition());
+    }
+
+    function addMessage(text, side) {
+        // 行（ラッパー）を作成
+        const row = document.createElement('div');
+        row.className = `chat-row ${side}`;
+
+        // Botの場合のみアイコン画像を追加
+        if (side === 'bot') {
+            const img = document.createElement('img');
+            img.src = iconImage;
+            img.className = 'bot-icon';
+            img.alt = '担当者';
+            // 画像読み込みエラー時の処理（万が一画像がない場合）
+            img.onerror = function() { this.style.display = 'none'; };
+            row.appendChild(img);
+        }
+
+        // 吹き出しを追加
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `msg ${side}`;
+        msgDiv.innerText = text;
+        row.appendChild(msgDiv);
+
+        log.appendChild(row);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    async function handleInput(val) {
+        const activeSteps = getActiveSteps();
+        const value = val || document.getElementById('input-field')?.value || "";
+        if (!value && activeSteps[currentStep].type !== 'loading') return;
+
+        userData[activeSteps[currentStep].id] = value;
+        addMessage(value, 'user');
+
+        if (activeSteps[currentStep].id === 'zip') {
+            try {
+                const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${value}`);
+                const data = await res.json();
+                if (data.results) {
+                    const r = data.results[0];
+                    userData['address_auto'] = r.address1 + r.address2 + r.address3;
+                }
+            } catch(e) {}
+        }
+
+        currentStep++;
+        showStep();
+    }
+
+    function goBack() {
+        if (currentStep > 0) {
+            currentStep--;
+            const activeSteps = getActiveSteps();
+            log.innerHTML = ""; // 画面クリア
+            for(let i=0; i<currentStep; i++) {
+                // 履歴再描画
+                addMessage(activeSteps[i].msg, 'bot');
+                addMessage(userData[activeSteps[i].id], 'user');
+            }
+            showStep();
+        }
+    }
+
+    function showStep() {
+        const activeSteps = getActiveSteps();
+        const step = activeSteps[currentStep];
+        addMessage(step.msg, 'bot');
+
+        if (step.type === 'loading') {
+            controls.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+            setTimeout(() => { currentStep++; showStep(); }, step.duration);
+            return;
+        }
+
+        if (step.type === 'options') {
+            let html = '<div class="options">';
+            step.options.forEach(opt => html += `<button class="opt-btn" onclick="handleInput('${opt}')">${opt}</button>`);
+            if (currentStep > 0) html += `<button class="back-btn" onclick="goBack()" style="margin-top:5px;">← 前へ戻る</button>`;
+            html += '</div>';
+            controls.innerHTML = html;
+        } else if (step.type === 'final') {
+            controls.innerHTML = `<a href="https://www.trinity-site.jp/" target="_blank" class="hp-link-btn">株式会社トリニティ 公式サイト</a><button class="next-btn" onclick="location.reload()">最初からやり直す</button>`;
+            sendDataToGoogle(); 
+        } else {
+            const val = (step.id === 'address' && userData['address_auto']) ? userData['address_auto'] : "";
+            controls.innerHTML = `
+                <input type="${step.type}" id="input-field" placeholder="${step.placeholder}" value="${val}">
+                <div class="btn-group">
+                    <button class="back-btn" onclick="goBack()">戻る</button>
+                    <button class="next-btn" onclick="handleInput()">次へ進む</button>
+                </div>
+                ${(step.id.includes('area') || step.id.includes('land')) ? `<button class="opt-btn" style="width:100%; margin-top:10px; border:1px solid #ddd; color:#aaa; font-size:13px;" onclick="handleInput('わからない')">わからない方はこちら</button>` : ''}
+            `;
+            const input = document.getElementById('input-field');
+            input.focus();
+            if(val) input.setSelectionRange(val.length, val.length);
+        }
+    }
+
+    // ★★★ Googleフォーム連携（最後にentryIDを入れます） ★★★
+    function sendDataToGoogle() {
+        // const formUrl = "https://docs.google.com/forms/d/e/XXXX/formResponse";
+        console.log("送信データ:", userData);
+    }
+
+    showStep();
+</script>
+</body>
+</html>
