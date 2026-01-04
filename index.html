@@ -424,7 +424,7 @@
           <button class="next-btn" onclick="location.reload()">最初からやり直す</button>
         `;
 
-        // ★送信（安定のHTMLフォームPOST方式）— 少し遅らせて確実に
+        // ★送信（GASへ）— 少し遅らせて確実に
         setTimeout(sendDataToGoogle, 300);
         return;
       }
@@ -453,60 +453,67 @@
     }
 
     // =========================
-    // Googleフォーム送信（安定版）
+    // GAS送信（B案：画面に送信状況表示）
     // =========================
     function sendDataToGoogle() {
-      // ★複製後フォームID（あなたが貼ってくれたもの）
-      const formId = "1FAIpQLScD7gFXpxlOte8FQHWAlm4Xv0MJH7MoqAuIwAimXlwZvNLNsA";
-      const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbzVl8IoUjUFtyi4wlN1m3ZErrSEyYUb5ksG2EEp-Fe7HfIZZO3lz05CJeF0Xw4OWTHu/exec";
 
-      // hidden iframe（画面遷移しない）
-      let iframe = document.getElementById("hidden_iframe");
-      if (!iframe) {
-        iframe = document.createElement("iframe");
-        iframe.name = "hidden_iframe";
-        iframe.id = "hidden_iframe";
-        iframe.style.display = "none";
-        document.body.appendChild(iframe);
+      // 送信ステータス表示エリア（なければ作る）
+      let statusEl = document.getElementById("send-status");
+      if (!statusEl) {
+        statusEl = document.createElement("div");
+        statusEl.id = "send-status";
+        statusEl.style.marginTop = "10px";
+        statusEl.style.fontSize = "12px";
+        statusEl.style.color = "#666";
+        statusEl.innerText = "送信中…";
+        const inputArea = document.getElementById("input-area");
+        if (inputArea) inputArea.prepend(statusEl);
+      } else {
+        statusEl.innerText = "送信中…";
+        statusEl.style.color = "#666";
       }
-
-      const form = document.createElement("form");
-      form.action = formUrl;
-      form.method = "POST";
-      form.target = "hidden_iframe";
-
-      const add = (name, value) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = value ?? "";
-        form.appendChild(input);
-      };
 
       // 1. 検討状況（空き家詳細を結合）
       let intentVal = userData.intent || "";
-      if (userData.other_detail) {
-        intentVal += " (詳細: " + userData.other_detail + ")";
-      }
-
-      // entry番号（あなたの事前入力リンクと一致）
-      add("entry.39702896", intentVal);                 // 検討状況
-      add("entry.1956018558", userData.type || "");     // 物件種別
-      add("entry.1184450983", userData.zip || "");      // 郵便番号
-      add("entry.436082943", userData.address || "");   // 住所
+      if (userData.other_detail) intentVal += " (詳細: " + userData.other_detail + ")";
 
       // 面積（単位結合）
       let areaStr = userData.area_val || "";
       if (userData.unit_type) areaStr += userData.unit_type;
-      add("entry.159085778", areaStr);                 // 面積
 
-      add("entry.1607874063", userData.name || "");    // 名前
-      add("entry.996995416", userData.tel || "");      // 電話番号
-      add("entry.427371744", userData.email || "");    // メール
-      add("pageHistory", "0");
-      document.body.appendChild(form);
-      form.submit();
-      form.remove();
+      fetch(GAS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          intent: intentVal,
+          type: userData.type || "",
+          zip: userData.zip || "",
+          address: userData.address || "",
+          area: areaStr,
+          name: userData.name || "",
+          tel: userData.tel || "",
+          email: userData.email || ""
+        })
+      })
+      .then(async (res) => {
+        const text = await res.text();
+        try {
+          return JSON.parse(text);
+        } catch {
+          return { status: "unknown", raw: text };
+        }
+      })
+      .then(json => {
+        console.log("✅ GAS送信OK:", json);
+        statusEl.innerText = "✅ 送信完了（スプレッドシートに保存されました）";
+        statusEl.style.color = "#0a7a2f";
+      })
+      .catch(err => {
+        console.error("❌ GAS送信エラー:", err);
+        statusEl.innerText = "❌ 送信失敗（ネットワーク / GAS設定 / シート設定を確認）";
+        statusEl.style.color = "#d93025";
+      });
     }
 
     // 起動
@@ -514,4 +521,3 @@
   </script>
 </body>
 </html>
-
