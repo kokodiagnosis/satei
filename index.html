@@ -79,6 +79,25 @@
         .msg strong { color: #000; font-weight: bold; }
         .msg a { color: #00469b; text-decoration: underline; }
 
+        /* 動画埋め込み用のスタイル */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9のアスペクト比 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         #input-area { padding: 15px; border-top: 1px solid #f0eddf; background: #fff; border-radius: 20px 20px 0 0; z-index: 20; flex-shrink: 0; }
         .options { display: flex; flex-direction: column; gap: 8px; }
         .opt-btn { background: #fff; border: 2px solid var(--main); color: var(--main); padding: 12px; border-radius: 12px; cursor: pointer; font-weight: bold; text-align: center; font-size: 14px; transition: 0.3s; }
@@ -111,7 +130,7 @@
     </div>
     <div id="chat-log"></div>
     <div id="input-area"><div id="controls"></div></div>
-    <div class="footer-company"><a href="https://www.trinity-site.jp/" target="_blank" style="color:#666; font-weight:bold;">株式会社トリニティ 公式ホームページ</a></div>
+    <div class="footer-company"><a href="https://trinity-111.com" target="_blank" style="color:#666; font-weight:bold;">株式会社トリニティ 公式ホームページ</a></div>
 </div>
 
 <script>
@@ -124,7 +143,7 @@
     const allSteps = [
         { 
             id: 'intent', 
-            msg: 'こんにちは！査定担当の荒木です。<br><br>ご入力いただく個人情報は<strong>【秘密厳守】</strong>で管理し、強引な営業電話などは一切いたしません。安心してご利用ください。<br><span style="font-size:12px">🔗 <a href="https://www.trinity-site.jp/" target="_blank">プライバシーポリシー</a></span><br><br>まずは、現在のご検討状況を教えていただけますか？', 
+            msg: 'こんにちは！査定担当の荒木です。<br><br>ご入力いただく個人情報は<strong>【秘密厳守】</strong>で管理し、強引な営業電話などは一切いたしません。安心してご利用ください。<br><span style="font-size:12px">🔗 <a href="https://trinity-111.com" target="_blank">プライバシーポリシー</a></span><br><br>まずは、現在のご検討状況を教えていただけますか？', 
             type: 'options', 
             options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい', '別住所の空き家を相談したい'] 
         },
@@ -185,7 +204,11 @@
         { id: 'name', msg: 'お待たせしました！算出の準備が整いました。最後にお名前をお願いします。', type: 'text', placeholder: '例: 田中 太郎' },
         { id: 'tel', msg: 'ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心ください。', type: 'tel', placeholder: '例: 09012345678' },
         { id: 'email', msg: '最後です！査定結果をお送りするメールアドレスを教えていただけますか？', type: 'email', placeholder: '例: mail@example.com' },
-        { id: 'finish', msg: 'すべて完了しました！お疲れ様でした！特典のアマギフ1万円分も面談完了時に進呈いたします。', type: 'final' }
+        { 
+            id: 'finish', 
+            msg: 'すべて完了しました！お疲れ様でした！特典のAmazonギフトカード1万円分も面談完了時に進呈いたします。<br><br>▼ トリニティの想い（動画 3秒〜）<br><div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/IFcxSeXWO1w?start=3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>', 
+            type: 'final' 
+        }
     ];
 
     function getActiveSteps() { return allSteps.filter(s => !s.condition || s.condition()); }
@@ -279,7 +302,7 @@
             html += '</div>';
             controls.innerHTML = html;
         } else if (step.type === 'final') {
-            controls.innerHTML = `<a href="https://www.trinity-site.jp/" target="_blank" class="hp-link-btn">株式会社トリニティ 公式サイト</a><button class="next-btn" onclick="location.reload()">最初からやり直す</button>`;
+            controls.innerHTML = `<a href="https://trinity-111.com" target="_blank" class="hp-link-btn">株式会社トリニティ 公式サイト</a><button class="next-btn" onclick="location.reload()">最初からやり直す</button>`;
             sendDataToGoogle(); 
         } else {
             const val = (step.id === 'address' && userData['address_auto']) ? userData['address_auto'] : "";
@@ -306,14 +329,14 @@
         const params = new URLSearchParams();
         
         params.append('entry.1147565457', userData.intent || "");  
-        params.append('entry.1438787019', userData.type || "");    
-        params.append('entry.548489816', userData.zip || "");      
+        params.append('entry.1438787019', userData.type || "");     
+        params.append('entry.548489816', userData.zip || "");       
         params.append('entry.1207865917', userData.address || ""); 
         params.append('entry.1989047910', userData.unit_type || "");
         params.append('entry.1950450596', userData.area_val || ""); 
-        params.append('entry.1856331908', userData.name || "");     
-        params.append('entry.1114518361', userData.tel || "");      
-        params.append('entry.1809051052', userData.email || "");   
+        params.append('entry.1856331908', userData.name || "");      
+        params.append('entry.1114518361', userData.tel || "");       
+        params.append('entry.1809051052', userData.email || "");    
         
         if(userData.other_detail) {
             params.append('entry.1147565457', "詳細: " + userData.other_detail);
@@ -328,4 +351,3 @@
 </script>
 </body>
 </html>
-     
