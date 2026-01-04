@@ -456,69 +456,68 @@
     // GAS送信（B案：画面に送信状況表示）
     // =========================
     function sendDataToGoogle() {
-      const GAS_URL = "https://script.google.com/macros/s/AKfycbzVl8IoUjUFtyi4wlN1m3ZErrSEyYUb5ksG2EEp-Fe7HfIZZO3lz05CJeF0Xw4OWTHu/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzVl8IoUjUFtyi4wlN1m3ZErrSEyYUb5ksG2EEp-Fe7HfIZZO3lz05CJeF0Xw4OWTHu/exec";
 
-      // 送信ステータス表示エリア（なければ作る）
-      let statusEl = document.getElementById("send-status");
-      if (!statusEl) {
-        statusEl = document.createElement("div");
-        statusEl.id = "send-status";
-        statusEl.style.marginTop = "10px";
-        statusEl.style.fontSize = "12px";
-        statusEl.style.color = "#666";
-        statusEl.innerText = "送信中…";
-        const inputArea = document.getElementById("input-area");
-        if (inputArea) inputArea.prepend(statusEl);
-      } else {
-        statusEl.innerText = "送信中…";
-        statusEl.style.color = "#666";
-      }
+  let statusEl = document.getElementById("send-status");
+  if (!statusEl) {
+    statusEl = document.createElement("div");
+    statusEl.id = "send-status";
+    statusEl.style.marginTop = "10px";
+    statusEl.style.fontSize = "12px";
+    statusEl.style.fontWeight = "bold";
+    const inputArea = document.getElementById("input-area");
+    if (inputArea) inputArea.prepend(statusEl);
+  }
 
-      // 1. 検討状況（空き家詳細を結合）
-      let intentVal = userData.intent || "";
-      if (userData.other_detail) intentVal += " (詳細: " + userData.other_detail + ")";
+  statusEl.textContent = "✅ 送信完了（受付しました）";
+  statusEl.style.color = "#0a7a2f";
 
-      // 面積（単位結合）
-      let areaStr = userData.area_val || "";
-      if (userData.unit_type) areaStr += userData.unit_type;
+  let intentVal = userData.intent || "";
+  if (userData.other_detail) intentVal += " (詳細: " + userData.other_detail + ")";
 
-      fetch(GAS_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          intent: intentVal,
-          type: userData.type || "",
-          zip: userData.zip || "",
-          address: userData.address || "",
-          area: areaStr,
-          name: userData.name || "",
-          tel: userData.tel || "",
-          email: userData.email || ""
-        })
-      })
-      .then(async (res) => {
-        const text = await res.text();
-        try {
-          return JSON.parse(text);
-        } catch {
-          return { status: "unknown", raw: text };
-        }
-      })
-      .then(json => {
-        console.log("✅ GAS送信OK:", json);
-        statusEl.innerText = "✅ 送信完了（スプレッドシートに保存されました）";
-        statusEl.style.color = "#0a7a2f";
-      })
-      .catch(err => {
-        console.error("❌ GAS送信エラー:", err);
-        statusEl.innerText = "❌ 送信失敗（ネットワーク / GAS設定 / シート設定を確認）";
-        statusEl.style.color = "#d93025";
-      });
-    }
+  let areaStr = userData.area_val || "";
+  if (userData.unit_type) areaStr += userData.unit_type;
+
+  let iframe = document.getElementById("hidden_gas_iframe");
+  if (!iframe) {
+    iframe = document.createElement("iframe");
+    iframe.name = "hidden_gas_iframe";
+    iframe.id = "hidden_gas_iframe";
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+  }
+
+  const form = document.createElement("form");
+  form.action = GAS_URL;
+  form.method = "POST";
+  form.target = "hidden_gas_iframe";
+
+  const add = (name, value) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value ?? "";
+    form.appendChild(input);
+  };
+
+  add("intent", intentVal);
+  add("type", userData.type || "");
+  add("zip", userData.zip || "");
+  add("address", userData.address || "");
+  add("area", areaStr);
+  add("name", userData.name || "");
+  add("tel", userData.tel || "");
+  add("email", userData.email || "");
+
+  document.body.appendChild(form);
+  form.submit();
+  form.remove();
+}
 
     // 起動
     showStep();
   </script>
 </body>
 </html>
+
 
