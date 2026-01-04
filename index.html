@@ -75,9 +75,9 @@
         .bot { background: var(--msg-bot); border-radius: 4px 20px 20px 20px; color: #444; border: 1px solid #f0eddf; margin-top: 10px; }
         .user { background: var(--msg-user); color: white; border-radius: 20px 20px 4px 20px; }
         
-        /* 煽り文言用の強調スタイル */
+        /* 強調用スタイル */
         .alert-text { color: #d93025; font-weight: bold; border-bottom: 1px solid #d93025; }
-        .msg strong { color: #000; }
+        .msg strong { color: #000; font-weight: bold; }
         .msg a { color: #00469b; text-decoration: underline; }
 
         #input-area { padding: 15px; border-top: 1px solid #f0eddf; background: #fff; border-radius: 20px 20px 0 0; z-index: 20; flex-shrink: 0; }
@@ -129,13 +129,47 @@
             type: 'options', 
             options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい', '別住所の空き家を相談したい'] 
         },
+
+        // --- ここから分岐ごとのメッセージ ---
+
+        // 1. 空き家の煽り（既存）
         { 
             id: 'akiya_warning',
-            msg: '空き家のご相談ですね。実は今、放置リスクが非常に高まっています。<br><br>🚨 <span class="alert-text">相続登記の義務化</span>により、放置すると過料（罰則）の対象に。<br>🚨 特定空き家指定で<span class="alert-text">固定資産税が最大6倍</span>に跳ね上がります。<br><br>不法投棄や害虫の発生で<span class="alert-text">近隣から訴えられるケース</span>も増えています。<strong>建物の価値は1年経つごとに大きく下がります。売るなら「今」が最高値です。</strong><br><br>管理だけで赤字になる前に、一度出口戦略を立てませんか？',
+            msg: '空き家のご相談ですね。実は今、放置リスクが非常に高まっています。<br><br>🚨 <span class="alert-text">相続登記の義務化</span>により、放置すると過料（罰則）の対象に。<br>🚨 特定空き家指定で<span class="alert-text">固定資産税が最大6倍</span>に跳ね上がります。<br><br>不法投棄や害虫の発生で近隣トラブルになる前に、一度出口戦略を立てませんか？（全国対応可能です！）',
             type: 'options',
             options: ['リスクを確認して査定に進む'],
             condition: () => userData.intent === '別住所の空き家を相談したい'
         },
+
+        // 2. すぐに売りたい（金利上昇・買い替え訴求）
+        { 
+            id: 'fast_warning',
+            msg: '「すぐに」というご判断、素晴らしいです！<br><br>昨今の<span class="alert-text">金利上昇</span>により、不動産相場の先行きは不透明になりつつあります。だからこそ、<strong>「今」が最も高く売れるチャンス</strong>かもしれません。<br><br>また、ご自宅を売却して新しい家を購入する<strong>「売りながら買う（買い替え）」</strong>のご相談も増えています。最適なプランをご提案しますので、まずは価格を確認しましょう！',
+            type: 'options',
+            options: ['査定に進む'],
+            condition: () => userData.intent === 'すぐに売りたい'
+        },
+
+        // 3. 半年以内（金利・準備期間・買い替え訴求）
+        { 
+            id: 'mid_warning',
+            msg: '半年以内のご検討ですね。非常に賢明です。<br><br>しかし、<span class="alert-text">金利の上昇局面</span>に入り、半年後の相場は読みづらくなっています。<br><br>早めに現在の価値を知っておくことで、<strong>「売りながら買う」住み替えプラン</strong>も余裕を持って立てられます。準備期間が成功の鍵ですので、まずは現状を把握しましょう。',
+            type: 'options',
+            options: ['査定に進む'],
+            condition: () => userData.intent === '半年以内に検討したい'
+        },
+
+        // 4. 相場を知りたい（将来の増税リスク・資産防衛）
+        { 
+            id: 'market_warning',
+            msg: '相場の把握、とても大切です！<br><br>今は売る気がなくても、将来的に空き家になれば<span class="alert-text">固定資産税の負担増</span>や、金利上昇による<span class="alert-text">資産価値の下落</span>も考えられます。<br><br><strong>「今の価値」を知っておくことが最大の防御策</strong>です。もちろん査定は無料ですので、リスク回避のためにも確認しておきましょう！',
+            type: 'options',
+            options: ['無料で相場を確認する'],
+            condition: () => userData.intent === 'まずは相場を知りたい'
+        },
+
+        // --- ここから共通項目 ---
+
         { 
             id: 'type', 
             msg: '承知いたしました！物件の種別はどちらでしょうか？', 
