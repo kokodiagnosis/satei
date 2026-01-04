@@ -321,26 +321,31 @@
         }
     }
 
-    // ★最新のGoogleフォームIDとEntryIDを反映済み
+    // ★解析した新しいフォームIDとEntryIDを適用済み
     function sendDataToGoogle() {
-        const formId = "1FAIpQLSe4BrnC6mmrchhrMuWKjle6c11JYB49kbGfq_7KPhZPC4dZaA";
+        const formId = "1FAIpQLSe5LI4Lh7q04dEJjWibHyRqCDvKeU__GsOFj6TtKwVoUXOcag";
         const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
         
         const params = new URLSearchParams();
         
-        params.append('entry.1147565457', userData.intent || "");  
-        params.append('entry.1438787019', userData.type || "");     
-        params.append('entry.548489816', userData.zip || "");       
-        params.append('entry.1207865917', userData.address || ""); 
-        params.append('entry.1989047910', userData.unit_type || "");
-        params.append('entry.1950450596', userData.area_val || ""); 
-        params.append('entry.1856331908', userData.name || "");      
-        params.append('entry.1114518361', userData.tel || "");       
-        params.append('entry.1809051052', userData.email || "");    
-        
+        // いただいたURLから解析した正しいEntryIDです
+        let intentVal = userData.intent || "";
         if(userData.other_detail) {
-            params.append('entry.1147565457', "詳細: " + userData.other_detail);
+            intentVal += " (詳細: " + userData.other_detail + ")";
         }
+        params.append('entry.39702896', intentVal);          // 1. 検討状況
+        params.append('entry.1956018558', userData.type || "");     // 2. 物件種別
+        params.append('entry.1184450983', userData.zip || "");      // 3. 郵便番号
+        params.append('entry.436082943', userData.address || "");   // 4. 住所
+        
+        // 5. 面積（単位も結合して送信）
+        let areaStr = userData.area_val || "";
+        if(userData.unit_type) areaStr += userData.unit_type;
+        params.append('entry.159085778', areaStr);
+        
+        params.append('entry.1607874063', userData.name || "");     // 6. 名前
+        params.append('entry.996995416', userData.tel || "");       // 7. 電話番号
+        params.append('entry.427371744', userData.email || "");     // 8. メール
 
         fetch(formUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => { console.log("送信成功"); })
