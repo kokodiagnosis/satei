@@ -1088,12 +1088,10 @@
           resultContainer.classList.add('show');
           scrollToBottom();
           
-          // 次のステップへ進むボタンを表示
-          
-            controls.innerHTML = `
-              <button class="next-btn" onclick="proceedAfterLottery()">次へ進む</button>
-            `;
-          
+          // 次のステップへ進むボタンを表示（ユーザーが押すまで待機）
+          controls.innerHTML = `
+            <button class="next-btn" onclick="proceedAfterLottery()" style="margin-top:20px;">次へ進む</button>
+          `;
           
         }, 800);
       }, 600);
@@ -1329,4 +1327,3 @@
   </script>
 </body>
 </html>
-
