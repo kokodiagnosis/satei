@@ -11,6 +11,8 @@
       --bg: #fffcf5;
       --msg-bot: #ffffff;
       --msg-user: #00469b;
+      --otoshidama-red: #d62828;
+      --otoshidama-gold: #f4a300;
     }
 
     body {
@@ -37,32 +39,54 @@
       height: 100%;
     }
 
-    .campaign-banner {
-      background: linear-gradient(45deg, #d4af37, #f9f1c0, #d4af37);
-      background-size: 200% auto;
-      animation: shine 3s linear infinite;
-      color: #542d05;
-      padding: 8px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    /* ========== 2段バナー ========== */
+    .header-banners {
+      flex-shrink: 0;
       z-index: 11;
-      border-bottom: 1px solid #c5a028;
     }
-    @keyframes shine { to { background-position: 200% center; } }
 
-    .header {
+    .main-banner {
       background: linear-gradient(135deg, #00469b, #0056b3);
       color: white;
-      padding: 12px;
+      padding: 12px 8px;
       text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      z-index: 10;
-      flex-shrink: 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .header h1 { font-size: 16px; margin: 0; letter-spacing: 0.5px; }
-    .header p { margin: 4px 0 0; font-size: 10px; opacity: 0.9; }
+    .main-banner h1 {
+      font-size: 18px;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+    .main-banner p {
+      margin: 4px 0 0;
+      font-size: 10px;
+      opacity: 0.9;
+    }
+
+    .campaign-banner {
+      background: linear-gradient(45deg, #d62828, #f4a300, #d62828);
+      background-size: 200% auto;
+      animation: shine 3s linear infinite;
+      color: #fff;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      border-bottom: 2px solid #a31f1f;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      line-height: 1.6;
+    }
+    .campaign-banner .campaign-main {
+      font-size: 14px;
+    }
+    .campaign-banner .campaign-sub {
+      font-size: 11px;
+      opacity: 0.95;
+      display: block;
+      margin-top: 2px;
+    }
+    @keyframes shine { to { background-position: 200% center; } }
 
     #chat-log {
       flex: 1;
@@ -98,6 +122,19 @@
     .alert-text { color: #d93025; font-weight: bold; border-bottom: 1px solid #d93025; }
     .msg strong { color: #000; font-weight: bold; }
     .msg a { color: #00469b; text-decoration: underline; }
+
+    .privacy-note {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .privacy-note a {
+      color: #00469b;
+    }
 
     .video-container {
       position: relative;
@@ -203,16 +240,580 @@
     .typing { display: flex; gap: 5px; padding: 10px; }
     .typing span { width: 8px; height: 8px; background: #d0d0d0; border-radius: 50%; animation: blink 1.2s infinite; }
     @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+    /* ========== ステップ表示 ========== */
+    .step-indicator {
+      background: linear-gradient(135deg, #fff3cd, #ffeeba);
+      border: 2px solid #f4a300;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 15px;
+      text-align: center;
+      animation: pulseGlow 2s infinite;
+    }
+    .step-indicator-text {
+      font-size: 14px;
+      font-weight: bold;
+      color: #856404;
+    }
+    .step-indicator-sub {
+      font-size: 12px;
+      color: #856404;
+      margin-top: 4px;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 5px rgba(244, 163, 0, 0.3); }
+      50% { box-shadow: 0 0 15px rgba(244, 163, 0, 0.6); }
+    }
+
+    /* ========== 改良版：くじガサガサアニメ ========== */
+    .lottery-teaser {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .lottery-box-container {
+      position: relative;
+      width: 160px;
+      height: 140px;
+    }
+
+    /* 抽選箱本体 */
+    .lottery-box {
+      width: 140px;
+      height: 90px;
+      background: linear-gradient(180deg, #c0392b 0%, #96281b 100%);
+      border-radius: 8px;
+      position: absolute;
+      bottom: 0;
+      left: 10px;
+      box-shadow: 
+        0 8px 20px rgba(0,0,0,0.3),
+        inset 0 2px 4px rgba(255,255,255,0.2),
+        inset 0 -5px 15px rgba(0,0,0,0.3);
+      overflow: visible;
+    }
+
+    /* 箱の上部の穴 */
+    .lottery-box::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 16px;
+      background: linear-gradient(180deg, #1a1a1a 0%, #333 100%);
+      border-radius: 50%;
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.8);
+    }
+
+    /* 抽選箱ラベル */
+    .lottery-box-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(145deg, #f4d03f, #c9a227);
+      color: #8b0000;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      white-space: nowrap;
+      border: 2px solid #a67c00;
+    }
+
+    /* 箱の装飾ライン */
+    .lottery-box::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 10px;
+      right: 10px;
+      height: 3px;
+      background: linear-gradient(90deg, #f4d03f, #fff7cc, #f4d03f);
+      border-radius: 2px;
+    }
+
+    /* 腕全体 */
+    .lottery-arm {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 80px;
+      animation: armGasagasa 0.6s ease-in-out infinite;
+      transform-origin: center top;
+    }
+
+    /* 袖（服の部分） */
+    .lottery-sleeve {
+      width: 35px;
+      height: 50px;
+      background: linear-gradient(180deg, #3498db 0%, #2980b9 50%, #1f6dad 100%);
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 8px 8px 12px 12px;
+      box-shadow: 
+        2px 0 4px rgba(0,0,0,0.2),
+        -2px 0 4px rgba(0,0,0,0.2);
+    }
+
+    /* 袖口 */
+    .lottery-sleeve::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: -3px;
+      right: -3px;
+      height: 8px;
+      background: linear-gradient(180deg, #ecf0f1, #bdc3c7);
+      border-radius: 0 0 5px 5px;
+    }
+
+    /* 手首 */
+    .lottery-wrist {
+      width: 28px;
+      height: 15px;
+      background: linear-gradient(180deg, #fce5cd, #f5cba7);
+      position: absolute;
+      top: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 3px;
+    }
+
+    /* 手のひら */
+    .lottery-hand {
+      width: 38px;
+      height: 32px;
+      background: linear-gradient(180deg, #fdebd0, #f5cba7);
+      border-radius: 8px 8px 12px 12px;
+      position: absolute;
+      top: 58px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 
+        0 3px 6px rgba(0,0,0,0.15),
+        inset 0 -2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 親指 */
+    .lottery-thumb {
+      width: 12px;
+      height: 20px;
+      background: linear-gradient(90deg, #fdebd0, #f5cba7);
+      border-radius: 6px;
+      position: absolute;
+      top: 60px;
+      left: calc(50% + 16px);
+      transform: rotate(20deg);
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+    }
+
+    /* 指 */
+    .lottery-fingers {
+      position: absolute;
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 2px;
+    }
+
+    .lottery-finger {
+      width: 8px;
+      height: 18px;
+      background: linear-gradient(180deg, #fdebd0, #e8c9a0);
+      border-radius: 4px;
+      box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+    }
+
+    .lottery-finger:nth-child(1) { height: 14px; }
+    .lottery-finger:nth-child(2) { height: 18px; }
+    .lottery-finger:nth-child(3) { height: 17px; }
+    .lottery-finger:nth-child(4) { height: 13px; }
+
+    @keyframes armGasagasa {
+      0%, 100% { 
+        transform: translateX(-50%) rotate(-12deg) translateY(0); 
+      }
+      25% { 
+        transform: translateX(-45%) rotate(8deg) translateY(3px); 
+      }
+      50% { 
+        transform: translateX(-55%) rotate(-8deg) translateY(5px); 
+      }
+      75% { 
+        transform: translateX(-48%) rotate(10deg) translateY(2px); 
+      }
+    }
+
+    /* 抽選玉 */
+    .lottery-balls {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      width: 110px;
+      height: 35px;
+      pointer-events: none;
+    }
+
+    .lottery-ball {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      box-shadow: 
+        inset -2px -2px 4px rgba(0,0,0,0.2),
+        inset 2px 2px 4px rgba(255,255,255,0.5),
+        0 2px 4px rgba(0,0,0,0.2);
+      animation: ballBounce 0.6s ease-in-out infinite;
+    }
+    .lottery-ball:nth-child(1) { background: linear-gradient(135deg, #ffd700, #ffec8b); left: 8px; bottom: 8px; animation-delay: 0s; }
+    .lottery-ball:nth-child(2) { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); left: 30px; bottom: 12px; animation-delay: 0.1s; }
+    .lottery-ball:nth-child(3) { background: linear-gradient(135deg, #4ecdc4, #7ee8e2); left: 52px; bottom: 6px; animation-delay: 0.2s; }
+    .lottery-ball:nth-child(4) { background: linear-gradient(135deg, #a55eea, #c490f0); left: 74px; bottom: 10px; animation-delay: 0.15s; }
+    .lottery-ball:nth-child(5) { background: linear-gradient(135deg, #26de81, #5ef0a8); left: 90px; bottom: 5px; animation-delay: 0.25s; }
+
+    @keyframes ballBounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-8px) rotate(15deg); }
+      50% { transform: translateY(-3px) rotate(-10deg); }
+      75% { transform: translateY(-10px) rotate(20deg); }
+    }
+
+    /* ========== お年玉袋スタイル ========== */
+    .otoshidama-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .otoshidama-envelope {
+      width: 180px;
+      height: 260px;
+      background: linear-gradient(145deg, #e63946, #c1121f);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 
+        0 10px 30px rgba(198, 18, 18, 0.4),
+        inset 0 2px 4px rgba(255,255,255,0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+      animation: envelopeFloat 2s ease-in-out infinite;
+    }
+
+    @keyframes envelopeFloat {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    .otoshidama-envelope:hover {
+      animation: none;
+      transform: scale(1.05);
+      box-shadow: 
+        0 15px 40px rgba(198, 18, 18, 0.5),
+        inset 0 2px 4px rgba(255,255,255,0.2);
+    }
+
+    .otoshidama-envelope::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: linear-gradient(145deg, #f4a300, #e09200);
+      clip-path: polygon(0 0, 100% 0, 100% 40px, 50% 70px, 0 40px);
+    }
+
+    .otoshidama-decoration {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(145deg, #f4a300, #d4920a);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 
+        0 4px 15px rgba(0,0,0,0.2),
+        inset 0 2px 4px rgba(255,255,255,0.3);
+    }
+
+    .otoshidama-decoration::after {
+      content: '福';
+      font-size: 48px;
+      font-weight: bold;
+      color: #c1121f;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .otoshidama-text {
+      position: absolute;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #f4a300;
+      font-size: 16px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      white-space: nowrap;
+    }
+
+    .tap-btn {
+      margin-top: 15px;
+      background: linear-gradient(145deg, #f4a300, #e09200);
+      color: #fff;
+      border: none;
+      padding: 14px 40px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(244, 163, 0, 0.4);
+      animation: tapPulse 1.5s infinite;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    @keyframes tapPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(244, 163, 0, 0.4); }
+      50% { transform: scale(1.05); box-shadow: 0 6px 25px rgba(244, 163, 0, 0.6); }
+    }
+
+    .tap-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* 開封アニメーション */
+    .otoshidama-envelope.opening {
+      animation: envelopeShake 0.6s ease-in-out !important;
+    }
+
+    @keyframes envelopeShake {
+      0%, 100% { transform: rotate(0deg); }
+      20% { transform: rotate(-10deg); }
+      40% { transform: rotate(10deg); }
+      60% { transform: rotate(-8deg); }
+      80% { transform: rotate(8deg); }
+    }
+
+    .otoshidama-envelope.opened {
+      animation: envelopeOpen 0.8s ease-out forwards !important;
+    }
+
+    @keyframes envelopeOpen {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    /* 結果表示 */
+    .result-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: resultAppear 0.6s ease-out;
+    }
+
+    .result-container.show {
+      display: flex;
+    }
+
+    @keyframes resultAppear {
+      0% { opacity: 0; transform: scale(0.5); }
+      50% { transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* 当選演出 */
+    .win-container {
+      background: linear-gradient(145deg, #ffd700, #ffec8b);
+      border-radius: 20px;
+      padding: 30px 25px;
+      box-shadow: 
+        0 10px 40px rgba(255, 215, 0, 0.5),
+        0 0 60px rgba(255, 215, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .win-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(
+        transparent,
+        rgba(255,255,255,0.3),
+        transparent,
+        rgba(255,255,255,0.3),
+        transparent
+      );
+      animation: sparkleRotate 3s linear infinite;
+    }
+
+    @keyframes sparkleRotate {
+      100% { transform: rotate(360deg); }
+    }
+
+    .win-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #c1121f;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .win-amount {
+      font-size: 42px;
+      font-weight: bold;
+      color: #d62828;
+      margin: 15px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .win-subtitle {
+      font-size: 16px;
+      color: #333;
+      position: relative;
+      z-index: 1;
+      line-height: 1.6;
+    }
+
+    .win-notice {
+      font-size: 11px;
+      color: #666;
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 8px;
+      position: relative;
+      z-index: 1;
+      line-height: 1.5;
+    }
+
+    /* 外れ演出 */
+    .lose-container {
+      background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+      border-radius: 20px;
+      padding: 25px 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .lose-title {
+      font-size: 20px;
+      color: #495057;
+      margin-bottom: 15px;
+    }
+
+    .second-chance-box {
+      background: linear-gradient(145deg, #00469b, #0056b3);
+      color: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 15px;
+    }
+
+    .second-chance-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffd700;
+      margin-bottom: 10px;
+    }
+
+    .second-chance-amount {
+      font-size: 32px;
+      font-weight: bold;
+      color: #fff;
+      margin: 10px 0;
+    }
+
+    .second-chance-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .second-chance-reason {
+      font-size: 11px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 12px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      animation: confettiFall 3s ease-out forwards;
+      z-index: 1000;
+    }
+
+    @keyframes confettiFall {
+      0% { 
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% { 
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* 完了画面 */
+    .finish-message {
+      background: linear-gradient(145deg, #e8f4fd, #d1e8fa);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .finish-message p {
+      margin: 0;
+      color: #00469b;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
   </style>
 </head>
 
 <body>
   <div id="chat-container">
-    <div class="campaign-banner">🎁 査定面談完了でAmazonギフトカード1万円分進呈中✨</div>
-
-    <div class="header">
-      <h1>🏠 1分で完結！簡単査定</h1>
-      <p>by 株式会社トリニティ</p>
+    <!-- 2段バナー -->
+    <div class="header-banners">
+      <div class="main-banner">
+        <h1>🏠 1分で完結！簡単査定</h1>
+        <p>by 株式会社トリニティ</p>
+      </div>
+      <div class="campaign-banner">
+        <span class="campaign-main">🎍 お年玉キャンペーン実施中！</span>
+        <span class="campaign-sub">その場でわかる✨ 抽選でAmazonギフト5,000円が当たる<br>外れても面談にてAmazonギフト1万円プレゼント確定🎁<br>【期間限定】</span>
+      </div>
     </div>
 
     <div id="chat-log"></div>
@@ -230,14 +831,25 @@
     const controls = document.getElementById('controls');
     let userData = {};
     let currentStep = 0;
+    let lotteryResult = null; // 'win' or 'lose'
 
     // アイコン画像（同階層に icon.png を置いてね）
     const iconImage = "./icon.png";
 
+    // 抽選確率（1/150）
+    const WIN_PROBABILITY = 1 / 150;
+
     const allSteps = [
       {
         id: 'intent',
-        msg: 'こんにちは！査定担当の荒木です。<br><br>ご入力いただく個人情報は<strong>【秘密厳守】</strong>で管理し、強引な営業電話などは一切いたしません。安心してご利用ください。<br><span style="font-size:12px">🔗 <a href="https://trinity-111.com" target="_blank">プライバシーポリシー</a></span><br><br>まずは、現在のご検討状況を教えていただけますか？',
+        msg: `こんにちは！査定担当の荒木です。<br><br>
+<div class="privacy-note">
+🔒 <strong>秘密厳守</strong><br>
+ご入力いただく個人情報は厳重に管理し、強引な営業電話などは一切いたしません。<br>
+ご家族に知られたくない方もご安心ください。査定結果はご本人様のみにお伝えし、郵送物も一切お送りしません。<br>
+<a href="https://trinity-111.com/privacy" target="_blank">🔗 プライバシーポリシー</a>
+</div>
+<br>まずは、現在のご検討状況を教えていただけますか？`,
         type: 'options',
         options: ['すぐに売りたい', '半年以内に検討したい', 'まずは相場を知りたい', '別住所の空き家を相談したい']
       },
@@ -296,11 +908,30 @@
       { id: 'other_detail', msg: 'ご相談内容（例：店舗、共有名義、空き家の状態など）を詳しく教えていただけますか？', type: 'textarea', placeholder: 'こちらにご記入ください', condition: () => userData.type === 'その他' || userData.intent === '別住所の空き家を相談したい' },
       { id: 'calculating', msg: 'ありがとうございます。ただいま最新の相場事例とリスク回避策を一生懸命チェックしています...', type: 'loading', duration: 2000 },
       { id: 'name', msg: 'お待たせしました！算出の準備が整いました。最後にお名前をお願いします。', type: 'text', placeholder: '例: 田中 太郎' },
-      { id: 'tel', msg: 'ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心ください。', type: 'tel', placeholder: '例: 09012345678' },
-      { id: 'email', msg: '最後です！査定結果をお送りするメールアドレスを教えていただけますか？', type: 'email', placeholder: '例: mail@example.com' },
+      { 
+        id: 'tel', 
+        msg: 'ご連絡先の電話番号をお願いします。強引な営業は行いませんのでご安心ください。', 
+        type: 'tel', 
+        placeholder: '例: 09012345678',
+        showLotteryTeaser: true,
+        remainingSteps: 2
+      },
+      { 
+        id: 'email', 
+        msg: '最後です！査定結果をお送りするメールアドレスを教えていただけますか？', 
+        type: 'email', 
+        placeholder: '例: mail@example.com',
+        showLotteryTeaser: true,
+        remainingSteps: 1
+      },
+      {
+        id: 'lottery',
+        msg: 'すべてのご入力ありがとうございました！🎍<br><br>お年玉キャンペーンの抽選にご参加いただけます。<br>下のお年玉袋をタップして、運試ししてみてください！',
+        type: 'lottery'
+      },
       {
         id: 'finish',
-        msg: 'すべて完了しました！お疲れ様でした！特典のAmazonギフトカード1万円分も面談完了時に進呈いたします。<br><br>▼ トリニティの想い（動画 3秒〜）<br><div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/IFcxSeXWO1w?start=3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>',
+        msg: '',
         type: 'final'
       }
     ];
@@ -334,24 +965,167 @@
 
     function scrollToBottom() { log.scrollTop = log.scrollHeight; }
 
+    // 紙吹雪エフェクト
+    function createConfetti() {
+      const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#ff9ff3'];
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + 'vw';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+          confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 4000);
+        }, i * 50);
+      }
+    }
+
+    // 抽選実行
+    function runLottery() {
+      return Math.random() < WIN_PROBABILITY;
+    }
+
+    // くじガサガサアニメーションHTML（改良版）
+    function getLotteryTeaserHTML(remainingSteps) {
+      return `
+        <div class="lottery-teaser">
+          <div class="lottery-box-container">
+            <div class="lottery-box">
+              <div class="lottery-box-label">抽選箱</div>
+              <div class="lottery-balls">
+                <div class="lottery-ball"></div>
+                <div class="lottery-ball"></div>
+                <div class="lottery-ball"></div>
+                <div class="lottery-ball"></div>
+                <div class="lottery-ball"></div>
+              </div>
+            </div>
+            <div class="lottery-arm">
+              <div class="lottery-sleeve"></div>
+              <div class="lottery-wrist"></div>
+              <div class="lottery-hand"></div>
+              <div class="lottery-thumb"></div>
+              <div class="lottery-fingers">
+                <div class="lottery-finger"></div>
+                <div class="lottery-finger"></div>
+                <div class="lottery-finger"></div>
+                <div class="lottery-finger"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-indicator">
+          <div class="step-indicator-text">🎍 あと${remainingSteps}ステップで抽選開始！</div>
+          <div class="step-indicator-sub">Amazonギフト5,000円が当たるチャンス</div>
+        </div>
+      `;
+    }
+
+    // お年玉袋クリック処理
+    function openOtoshidama() {
+      const envelope = document.querySelector('.otoshidama-envelope');
+      const resultContainer = document.querySelector('.result-container');
+      const tapBtn = document.querySelector('.tap-btn');
+      
+      if (!envelope || envelope.classList.contains('opening')) return;
+      
+      // 抽選実行
+      const isWin = runLottery();
+      lotteryResult = isWin ? 'win' : 'lose';
+      userData.lottery_result = lotteryResult;
+      
+      // ボタン非表示
+      if (tapBtn) tapBtn.style.display = 'none';
+      
+      // 開封アニメーション開始
+      envelope.classList.add('opening');
+      
+      setTimeout(() => {
+        envelope.classList.remove('opening');
+        envelope.classList.add('opened');
+        
+        setTimeout(() => {
+          envelope.style.display = 'none';
+          
+          // 結果表示
+          if (isWin) {
+            createConfetti();
+            resultContainer.innerHTML = `
+              <div class="win-container">
+                <div class="win-title">🎊 おめでとうございます！ 🎊</div>
+                <div class="win-amount">Amazonギフト<br>5,000円分</div>
+                <div class="win-subtitle">当選しました！</div>
+                <div class="win-notice">
+                  ※実際の住所と異なる場合、複数回の応募の場合、等不正の手段による抽選応募に関しては、当選が無効になる可能性があります。ご了承ください。<br><br>
+                  担当より確認のご連絡をいたしますので、今しばらくお待ちください。
+                </div>
+              </div>
+            `;
+          } else {
+            resultContainer.innerHTML = `
+              <div class="lose-container">
+                <div class="lose-title">残念...今回はハズレでした</div>
+                <div class="second-chance-box">
+                  <div class="second-chance-title">🎁 セカンドチャンス！</div>
+                  <div class="second-chance-amount">Amazonギフト<br>10,000円分</div>
+                  <div class="second-chance-desc">
+                    ご売却相談面談の成立（対面）にて<br>
+                    <strong>Amazonギフト1万円</strong>をプレゼント！<br><br>
+                    抽選よりも確実に、しかも2倍の金額をゲットできるチャンスです。<br>
+                    担当よりご連絡いたしますので、ぜひご検討ください！
+                  </div>
+                  <div class="second-chance-reason">
+                    💡 <strong>なぜ1万円？</strong><br>
+                    不動産業者は本来、一括査定サイトに月数十万円かけて広告を出しています。あえて、その一部をお客様に直接還元することで、"本当に売却を考えている方"に最高のご提案を差し上げたいのです。
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          
+          resultContainer.classList.add('show');
+          scrollToBottom();
+          
+          // 次のステップへ進むボタンを表示
+          setTimeout(() => {
+            controls.innerHTML = `
+              <button class="next-btn" onclick="proceedAfterLottery()">次へ進む</button>
+            `;
+          }, 1500);
+          
+        }, 800);
+      }, 600);
+    }
+
+    function proceedAfterLottery() {
+      currentStep++;
+      showStep();
+      // データ送信
+      setTimeout(sendDataToGoogle, 300);
+    }
+
     async function handleInput(val) {
       const activeSteps = getActiveSteps();
       const step = activeSteps[currentStep];
 
       const value = val ?? document.getElementById('input-field')?.value ?? "";
-      if (!value && step.type !== 'loading') return;
+      if (!value && step.type !== 'loading' && step.type !== 'lottery') return;
 
       userData[step.id] = value;
 
-      // user message
-      const row = document.createElement('div');
-      row.className = `chat-row user`;
-      const msgDiv = document.createElement('div');
-      msgDiv.className = `msg user`;
-      msgDiv.innerText = value + (step.suffix ? step.suffix() : "");
-      row.appendChild(msgDiv);
-      log.appendChild(row);
-      scrollToBottom();
+      // user message (lotteryステップ以外)
+      if (step.type !== 'lottery') {
+        const row = document.createElement('div');
+        row.className = `chat-row user`;
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `msg user`;
+        msgDiv.innerText = value + (step.suffix ? step.suffix() : "");
+        row.appendChild(msgDiv);
+        log.appendChild(row);
+        scrollToBottom();
+      }
 
       // zip auto address
       if (step.id === 'zip') {
@@ -380,13 +1154,15 @@
         const msgText = typeof activeSteps[i].msg === 'function' ? activeSteps[i].msg() : activeSteps[i].msg;
         addMessage(msgText, 'bot');
 
-        const row = document.createElement('div');
-        row.className = `chat-row user`;
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `msg user`;
-        msgDiv.innerText = (userData[activeSteps[i].id] ?? "") + (activeSteps[i].suffix ? activeSteps[i].suffix() : "");
-        row.appendChild(msgDiv);
-        log.appendChild(row);
+        if (activeSteps[i].type !== 'lottery') {
+          const row = document.createElement('div');
+          row.className = `chat-row user`;
+          const msgDiv = document.createElement('div');
+          msgDiv.className = `msg user`;
+          msgDiv.innerText = (userData[activeSteps[i].id] ?? "") + (activeSteps[i].suffix ? activeSteps[i].suffix() : "");
+          row.appendChild(msgDiv);
+          log.appendChild(row);
+        }
       }
 
       scrollToBottom();
@@ -400,12 +1176,29 @@
       const step = activeSteps[currentStep];
       const msgText = typeof step.msg === 'function' ? step.msg() : step.msg;
 
-      addMessage(msgText, 'bot');
+      if (msgText) {
+        addMessage(msgText, 'bot');
+      }
       scrollToBottom();
 
       if (step.type === 'loading') {
         controls.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
         setTimeout(() => { currentStep++; showStep(); }, step.duration);
+        return;
+      }
+
+      if (step.type === 'lottery') {
+        controls.innerHTML = `
+          <div class="otoshidama-container">
+            <div class="otoshidama-envelope" onclick="openOtoshidama()">
+              <div class="otoshidama-decoration"></div>
+              <div class="otoshidama-text">お年玉</div>
+            </div>
+            <button class="tap-btn" onclick="openOtoshidama()">👆 タップして開封！</button>
+            <div class="result-container"></div>
+          </div>
+        `;
+        scrollToBottom();
         return;
       }
 
@@ -419,17 +1212,32 @@
       }
 
       if (step.type === 'final') {
+        // 完了画面
+        const finishHTML = `
+          <div class="finish-message">
+            <p>担当より<strong>5営業日以内</strong>にご連絡いたします。<br>今しばらくお待ちください。</p>
+          </div>
+          <div style="text-align:center; margin-bottom:15px; color:#666; font-size:13px;">
+            ▼ トリニティの想い（動画）
+          </div>
+          <div class="video-container">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/IFcxSeXWO1w?start=3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+        `;
+        addMessage(finishHTML, 'bot');
+        
         controls.innerHTML = `
           <a href="https://trinity-111.com" target="_blank" class="hp-link-btn">株式会社トリニティ 公式サイト</a>
           <button class="next-btn" onclick="location.reload()">最初からやり直す</button>
         `;
-
-        // ★送信（GASへ）— 少し遅らせて確実に
-        setTimeout(sendDataToGoogle, 300);
         return;
       }
 
       const val = (step.id === 'address' && userData['address_auto']) ? userData['address_auto'] : "";
+      
+      // くじガサガサ表示判定
+      const lotteryTeaserHTML = step.showLotteryTeaser ? getLotteryTeaserHTML(step.remainingSteps) : '';
+      
       const inputHtml = step.type === 'textarea'
         ? `<textarea id="input-field" rows="3" placeholder="${step.placeholder}">${val}</textarea>`
         : `<div style="position:relative;">
@@ -438,6 +1246,7 @@
            </div>`;
 
       controls.innerHTML = `
+        ${lotteryTeaserHTML}
         ${inputHtml}
         <div class="btn-group">
           <button class="back-btn" onclick="goBack()">戻る</button>
@@ -453,73 +1262,70 @@
     }
 
     // =========================
-    // GAS送信（B案：画面に送信状況表示）
+    // GAS送信
     // =========================
     function sendDataToGoogle() {
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwXMB51IX5FWAMkFWmhJgL_im_OvN24-EwYiYMK3bgz8db_JhSi02crK_lhJgygIAjy/exec";
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbwXMB51IX5FWAMkFWmhJgL_im_OvN24-EwYiYMK3bgz8db_JhSi02crK_lhJgygIAjy/exec";
 
-  let statusEl = document.getElementById("send-status");
-  if (!statusEl) {
-    statusEl = document.createElement("div");
-    statusEl.id = "send-status";
-    statusEl.style.marginTop = "10px";
-    statusEl.style.fontSize = "12px";
-    statusEl.style.fontWeight = "bold";
-    const inputArea = document.getElementById("input-area");
-    if (inputArea) inputArea.prepend(statusEl);
-  }
+      let statusEl = document.getElementById("send-status");
+      if (!statusEl) {
+        statusEl = document.createElement("div");
+        statusEl.id = "send-status";
+        statusEl.style.marginTop = "10px";
+        statusEl.style.fontSize = "12px";
+        statusEl.style.fontWeight = "bold";
+        const inputArea = document.getElementById("input-area");
+        if (inputArea) inputArea.prepend(statusEl);
+      }
 
-  statusEl.textContent = "✅ 送信完了（受付しました）";
-  statusEl.style.color = "#0a7a2f";
+      statusEl.textContent = "✅ 送信完了（受付しました）";
+      statusEl.style.color = "#0a7a2f";
 
-  let intentVal = userData.intent || "";
-  if (userData.other_detail) intentVal += " (詳細: " + userData.other_detail + ")";
+      let intentVal = userData.intent || "";
+      if (userData.other_detail) intentVal += " (詳細: " + userData.other_detail + ")";
 
-  let areaStr = userData.area_val || "";
-  if (userData.unit_type) areaStr += userData.unit_type;
+      let areaStr = userData.area_val || "";
+      if (userData.unit_type) areaStr += userData.unit_type;
 
-  let iframe = document.getElementById("hidden_gas_iframe");
-  if (!iframe) {
-    iframe = document.createElement("iframe");
-    iframe.name = "hidden_gas_iframe";
-    iframe.id = "hidden_gas_iframe";
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
-  }
+      let iframe = document.getElementById("hidden_gas_iframe");
+      if (!iframe) {
+        iframe = document.createElement("iframe");
+        iframe.name = "hidden_gas_iframe";
+        iframe.id = "hidden_gas_iframe";
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+      }
 
-  const form = document.createElement("form");
-  form.action = GAS_URL;
-  form.method = "POST";
-  form.target = "hidden_gas_iframe";
+      const form = document.createElement("form");
+      form.action = GAS_URL;
+      form.method = "POST";
+      form.target = "hidden_gas_iframe";
 
-  const add = (name, value) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = name;
-    input.value = value ?? "";
-    form.appendChild(input);
-  };
+      const add = (name, value) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value ?? "";
+        form.appendChild(input);
+      };
 
-  add("intent", intentVal);
-  add("type", userData.type || "");
-  add("zip", userData.zip || "");
-  add("address", userData.address || "");
-  add("area", areaStr);
-  add("name", userData.name || "");
-  add("tel", userData.tel || "");
-  add("email", userData.email || "");
+      add("intent", intentVal);
+      add("type", userData.type || "");
+      add("zip", userData.zip || "");
+      add("address", userData.address || "");
+      add("area", areaStr);
+      add("name", userData.name || "");
+      add("tel", userData.tel || "");
+      add("email", userData.email || "");
+      add("lottery_result", userData.lottery_result || "");
 
-  document.body.appendChild(form);
-  form.submit();
-  form.remove();
-}
+      document.body.appendChild(form);
+      form.submit();
+      form.remove();
+    }
 
     // 起動
     showStep();
   </script>
 </body>
 </html>
-
-
-
-
