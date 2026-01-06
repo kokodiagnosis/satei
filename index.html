@@ -1320,6 +1320,8 @@
       add("tel", userData.tel || "");
       add("email", userData.email || "");
       add("lottery_result", userData.lottery_result || "");
+      add("duplicate_flag", userData.duplicate_flag ? "true" : "false");
+
 
       document.body.appendChild(form);
       form.submit();
