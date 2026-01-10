@@ -832,6 +832,9 @@
     let currentStep = 0;
     let lotteryResult = null; // 'win' or 'lose'
 
+    // ✅（追加）二重送信防止フラグ
+    let hasSent = false;
+
     // アイコン画像（同階層に icon.png を置いてね）
     const iconImage = "./icon.png";
 
@@ -1035,6 +1038,9 @@
       lotteryResult = isWin ? 'win' : 'lose';
       userData.lottery_result = lotteryResult;
 
+      // ✅（追加・最重要）抽選結果が確定した瞬間に送信（取りこぼし防止）
+      setTimeout(sendDataToGoogle, 50);
+
       // ボタン非表示
       if (tapBtn) tapBtn.style.display = 'none';
 
@@ -1100,8 +1106,7 @@
     function proceedAfterLottery() {
       currentStep++;
       showStep();
-      // データ送信（抽選結果を確実に入れてから送る）
-      setTimeout(sendDataToGoogle, 300);
+      // ✅（変更）ここでは送信しない（抽選確定時に送信済み）
     }
 
     async function handleInput(val) {
@@ -1267,6 +1272,10 @@
     // GAS送信
     // =========================
     function sendDataToGoogle() {
+      // ✅（追加）二重送信防止：この関数は1回だけ実行
+      if (hasSent) return;
+      hasSent = true;
+
       const GAS_URL = "https://script.google.com/macros/s/AKfycbwXf-ONUgDJpYB6aypj4O15ILXLhEqGkfli7Uuxt-bCi9EQHxELUJLKTyZtpgkF7ilc/exec";
 
       let statusEl = document.getElementById("send-status");
@@ -1322,7 +1331,6 @@
       add("lottery_result", userData.lottery_result || "");
       add("duplicate_flag", userData.duplicate_flag ? "true" : "false");
 
-
       document.body.appendChild(form);
       form.submit();
       form.remove();
@@ -1333,6 +1341,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
